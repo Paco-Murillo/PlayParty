@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navUsuario"
+        android:icon="@drawable/usuario"
+        android:title="Usuario" />
+    <item
+        android:id="@+id/navPlayParty"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:title="PlayParty" />
+    <item
+        android:id="@+id/navMapa"
+        android:title="Mapa" />
+</menu>

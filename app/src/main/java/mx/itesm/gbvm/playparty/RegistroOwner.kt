@@ -3,11 +3,9 @@ package mx.itesm.gbvm.playparty
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
-class MainActivity : AppCompatActivity() {
+class RegistroOwner: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.qr_inicio)
+        setContentView(R.layout.activity_registro_owner)
     }
 }
-
-//Doy clases los jueves :)
