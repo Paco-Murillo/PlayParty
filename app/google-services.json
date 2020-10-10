@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "22738350242",
+    "firebase_url": "https://playparty-a9dd9.firebaseio.com",
+    "project_id": "playparty-a9dd9",
+    "storage_bucket": "playparty-a9dd9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:22738350242:android:b630bc79c89cec207ca7fb",
+        "android_client_info": {
+          "package_name": "mx.itesm.gbvm.playparty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "22738350242-bcspi6qvmorb4asvvg0jbi483fjebpes.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmkLqqQGV1AA8LcC0jWelm38tZMzCdyyo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "22738350242-bcspi6qvmorb4asvvg0jbi483fjebpes.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
