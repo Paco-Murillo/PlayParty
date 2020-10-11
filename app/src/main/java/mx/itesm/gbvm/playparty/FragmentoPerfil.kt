@@ -14,4 +14,5 @@ class FragmentoPerfil : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_perfil, container, false)
     }
+
 }
