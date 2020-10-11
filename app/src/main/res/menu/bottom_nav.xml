@@ -2,14 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_perfil"
-        android:icon = "@drawable/perfil"
-        android:title="Perfil"/>
+        android:icon="@drawable/perfil"
+        android:title="Perfil" />
     <item
         android:id = "@+id/nav_Musica"
         android:icon = "@drawable/musica"
-        android:title = "Musica" />
+        android:title = "Musica"
+        android:state_checked="true"/>
     <item
-        android:id = "@+id/nav_Mapa"
-        android:icon = "@drawable/mapa"
-        android:title = "Mapa" />
+        android:id="@+id/nav_Mapa"
+        android:icon="@drawable/mapa"
+        android:title="Mapa" />
 </menu>
