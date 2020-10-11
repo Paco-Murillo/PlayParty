@@ -14,8 +14,8 @@
         android:id="@+id/backBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:background="#000000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -49,7 +49,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="100dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -65,14 +65,16 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="30dp"
+                android:layout_marginLeft="20dp"
                 android:layout_weight="1"
                 app:srcCompat="@android:drawable/ic_dialog_email" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="50dp"
+                android:layout_marginTop="-10dp"
+                android:layout_marginRight="60dp"
+                android:layout_marginBottom="-10dp"
                 android:layout_weight="5"
                 android:background="#FFFFFF"
                 android:textColorHint="#000000">
@@ -81,7 +83,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Correo" />
+                    android:hint="Correo electrónico" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
@@ -96,14 +98,16 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="30dp"
+                android:layout_marginLeft="20dp"
                 android:layout_weight="1"
                 app:srcCompat="@android:drawable/ic_dialog_email" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="50dp"
+                android:layout_marginTop="-10dp"
+                android:layout_marginRight="60dp"
+                android:layout_marginBottom="-10dp"
                 android:layout_weight="5"
                 android:background="#FFFFFF"
                 android:textColorHint="#000000">
@@ -112,7 +116,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Correo" />
+                    android:hint="Nombre de usuario" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
@@ -127,14 +131,16 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="30dp"
+                android:layout_marginLeft="20dp"
                 android:layout_weight="1"
                 app:srcCompat="@android:drawable/ic_dialog_email" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="50dp"
+                android:layout_marginTop="-10dp"
+                android:layout_marginRight="60dp"
+                android:layout_marginBottom="-10dp"
                 android:layout_weight="5"
                 android:background="#FFFFFF"
                 android:textColorHint="#000000">
@@ -143,7 +149,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Correo" />
+                    android:hint="Contraseña" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
@@ -152,11 +158,10 @@
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="0dp"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="136dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="116dp"
         android:background="#AA64E5"
         android:text="Registrarse"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"

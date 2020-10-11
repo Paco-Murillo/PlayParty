@@ -17,7 +17,7 @@ class FragmentoRegistro : Fragment() {
         return inflater.inflate(R.layout.fragment_registro, container, false)
     }
 
-
+/*
     fun onCreate(savedInstanceState: Bundle?) {
         private lateinit var mAuth: FirebaseAuth
         super.onCreate(savedInstanceState)
@@ -135,6 +135,6 @@ class FragmentoRegistro : Fragment() {
 
                 }
         }
-}
+}*/
 }
 

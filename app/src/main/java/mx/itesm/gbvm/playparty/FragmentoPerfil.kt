@@ -22,4 +22,30 @@ class FragmentoPerfil : Fragment() {
         startActivity(intRegresar)
 
     }
+    /*
+    *   @Override
+public void onBackPressed() {
+    if (getFragmentManager().getBackStackEntryCount() > 0) {
+        getFragmentManager().popBackStack();
+    } else {
+        super.onBackPressed();
+    }
+}
+* requireActivity()
+    .onBackPressedDispatcher
+    .addCallback(this, object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            Log.d(TAG, "Fragment back pressed invoked")
+            // Do custom work here
+
+            // if you want onBackPressed() to be called as normal afterwards
+            if (isEnabled) {
+                isEnabled = false
+                requireActivity().onBackPressed()
+            }
+        }
+    }
+)
+fragmentManager.beginTransaction().replace(R.id.content_frame,fragment).addToBackStack("tag").commit();
+    * */
 }

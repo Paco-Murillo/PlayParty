@@ -15,15 +15,16 @@ class QRInicio : AppCompatActivity() {
         val musicaFragment = FragmentoMusica()
         val mapaFragment = FragmentoMapa()
         val registroOIniciodesesion = Registro_o_InicioDeSesion()
-
-        makeCurrentFragment(perfilFragment)
+        val registroFragment = FragmentoRegistro()
+        val inicioSesion = FragmentoInicioSesion()
+        makeCurrentFragment(inicioSesion)
 
         bottom_nav.setOnNavigationItemSelectedListener {
             when (it.itemId){
-                //R.id.nav_perfil -> makeCurrentFragment(perfilFragment)
+                R.id.nav_perfil -> makeCurrentFragment(perfilFragment)
                 R.id.nav_Musica -> makeCurrentFragment(musicaFragment)
                 R.id.nav_Mapa -> makeCurrentFragment(mapaFragment)
-                R.id.nav_perfil-> makeCurrentFragment(registroOIniciodesesion)
+                //R.id.nav_perfil-> makeCurrentFragment(registroOIniciodesesion)
             }
             true
         }
