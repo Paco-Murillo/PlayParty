@@ -9,6 +9,7 @@ import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +17,11 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.*
+import com.spotify.android.appremote.api.ConnectionParams
+import com.spotify.android.appremote.api.Connector.ConnectionListener
+import com.spotify.android.appremote.api.SpotifyAppRemote
+import kotlinx.android.synthetic.main.fragment_qr.*
 import kotlinx.android.synthetic.main.fragment_registrar.*
 import kotlinx.android.synthetic.main.qr_inicio.*
 
@@ -25,9 +31,18 @@ class QRInicio : AppCompatActivity(), GPSListener {
     private val CODIGO_PERMISO_GPS: Int = 200
     private var posicion: Location? = null
 
-    public var idMusica = null
-    public var BotonValido = false
-    //Luismi la Rego
+    // Validacion ID
+    var idMusica:String = ""
+    var BotonValido: Boolean = false
+    private  val database = FirebaseDatabase.getInstance()
+    private lateinit var referencia: DatabaseReference
+
+    //Spotify
+    private val CLIENT_ID: String? = "571410421d934710ba3a3f201b170b50"
+    private val REDIRECT_URI = "http://com.yourdomain.yourapp/callback"
+    private var mSpotifyAppRemote: SpotifyAppRemote? = null
+
+
     //Google Autenticador
     private val LOGIN_GOOGLE: Int = 500
     private lateinit var mGoogleSignInClient: String
@@ -38,6 +53,7 @@ class QRInicio : AppCompatActivity(), GPSListener {
             replace(R.id.fragment_container, fragment)
             commit()
         }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         configurarGPS()
         super.onCreate(savedInstanceState)
@@ -53,8 +69,8 @@ class QRInicio : AppCompatActivity(), GPSListener {
         val inicioSesion = FragmentoInicioSesion()
         val QRFragment = FragmentoQR()
 
-        //Fragmento inicial
-        makeCurrentFragment(Registro_o_InicioDeSesion())
+        makeCurrentFragment(QRFragment)
+
         bottom_nav.setOnNavigationItemSelectedListener {
             when (it.itemId){
                 R.id.nav_perfil -> makeCurrentFragment(registroOIniciodesesion)
@@ -68,11 +84,59 @@ class QRInicio : AppCompatActivity(), GPSListener {
             }
             true
         }
+
+        //Spotify
+        // Set the connection parameters
+        var connectionParams: ConnectionParams? = ConnectionParams.Builder(CLIENT_ID)
+            .setRedirectUri(REDIRECT_URI)
+            .showAuthView(true)
+            .build()
+        SpotifyAppRemote.connect(this, connectionParams,
+            object : ConnectionListener {
+                override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
+                    mSpotifyAppRemote = spotifyAppRemote
+                    Log.d("MainActivity", "Connected! Yay!")
+                    // Now you can start interacting with App Remote
+                    connected()
+                }
+
+                override fun onFailure(throwable: Throwable) {
+                    Log.e("MainActivity", throwable.message, throwable)
+
+                    // Something went wrong when attempting to connect! Handle errors here
+                }
+            })
+
+    }
+
+    private fun connected() {
+        mSpotifyAppRemote?.getPlayerApi()?.play("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
     }
 
     //Botones
     fun validarID(v: View){
+        idMusica = etSearch.text.toString()
+        println(idMusica)
+        referencia = database.getReference("/Establecimientos")
+        referencia.addValueEventListener(object: ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
 
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (registro in snapshot.children) {
+                    val establecimiento = registro.getValue(mx.itesm.gbvm.playparty.Establecimiento::class.java)
+                    if (establecimiento != null) {
+                        val id = establecimiento.ID
+                        if (id == idMusica){
+                            println("Funciono")
+                            makeCurrentFragment(FragmentoMusica())
+                            BotonValido = true
+                        }
+                    }
+                }
+            }
+        })
     }
     fun btnFragInicioSesion(v: View){
         makeCurrentFragment(FragmentoInicioSesion())
@@ -264,4 +328,6 @@ class QRInicio : AppCompatActivity(), GPSListener {
         ).show()
         makeCurrentFragment(Registro_o_InicioDeSesion())
     }
+
+
 }

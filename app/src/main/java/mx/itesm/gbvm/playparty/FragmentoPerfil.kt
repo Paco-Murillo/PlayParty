@@ -17,11 +17,6 @@ class FragmentoPerfil : Fragment() {
         return inflater.inflate(R.layout.fragment_perfil, container, false)
     }
 
-    fun btnRegresar(v: View){
-        val intRegresar = Intent(activity, QRInicio::class.java)
-        startActivity(intRegresar)
-
-    }
     /*
     *   @Override
 public void onBackPressed() {
