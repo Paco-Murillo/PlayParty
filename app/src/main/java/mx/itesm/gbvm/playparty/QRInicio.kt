@@ -24,12 +24,11 @@ class QRInicio : AppCompatActivity(), GPSListener {
     public var idMusica = null
     public var BotonValido = false
 
-
-    //Botones
-
-    fun boton(v: View){
-        makeCurrentFragment(Registro_o_InicioDeSesion())
-    }
+    private fun makeCurrentFragment(fragment: Fragment) =
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fragment_container,fragment)
+            commit()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         configurarGPS()
@@ -59,16 +58,16 @@ class QRInicio : AppCompatActivity(), GPSListener {
         }
     }
 
+    //Botones
+
+    fun boton(v: View){
+        makeCurrentFragment(FragmentoInicioSesion())
+    }
     fun validarID(v: View){
 
     }
 
-    private fun makeCurrentFragment(fragment: Fragment) =
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.fragment_container,fragment)
-            commit()
-        }
-
+    //GPS
     private fun configurarGPS() {
         gps = GPS()
         gps?.gpsListener = this
@@ -143,5 +142,4 @@ class QRInicio : AppCompatActivity(), GPSListener {
     override fun actualizarPosicion(posicion: Location) {
         this.posicion = posicion
     }
-
 }
