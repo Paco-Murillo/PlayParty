@@ -2,7 +2,6 @@ package mx.itesm.gbvm.playparty
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.IntentSender
 import android.location.Location
 import android.os.Looper
@@ -27,7 +26,7 @@ class GPS
 
     var gpsListener: GPSListener? = null
 
-    fun inicializar(contexto: Context) {
+    fun inicializar(contexto: QRInicio) {
         gps = LocationServices.getFusedLocationProviderClient(contexto)
         ajustes = LocationServices.getSettingsClient(contexto)
 
