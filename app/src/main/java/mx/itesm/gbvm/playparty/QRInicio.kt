@@ -27,7 +27,7 @@ class QRInicio : AppCompatActivity(), GPSListener {
 
     public var idMusica = null
     public var BotonValido = false
-
+    //Luismi la Rego
     //Google Autenticador
     private val LOGIN_GOOGLE: Int = 500
     private lateinit var mGoogleSignInClient: String
