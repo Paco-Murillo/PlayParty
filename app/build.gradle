@@ -28,8 +28,8 @@ android {
 dependencies {
     //Servicios de google
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'com.google.android.gms:play-services-location:17.1.0'
     implementation 'com.google.firebase:firebase-storage:19.2.0'
+    implementation 'com.google.android.gms:play-services-location:17.1.0'
     //Networking
     implementation 'com.amitshekhar.android:jackson-android-networking:1.0.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -44,7 +44,10 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'com.google.android.material:material:1.2.1'
+    //Firbase
     implementation 'com.google.firebase:firebase-auth:19.4.0'
+    implementation 'com.google.android.gms:play-services-auth:18.1.0'
+
 
     implementation 'com.google.firebase:firebase-database:19.5.0'
     testImplementation 'junit:junit:4.12'
