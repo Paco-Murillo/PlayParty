@@ -43,7 +43,7 @@ class QRInicio : AppCompatActivity(), GPSListener {
         val registroFragment = FragmentoRegistro()
         val inicioSesion = FragmentoInicioSesion()
         val QRFragment = FragmentoQR()
-
+        makeCurrentFragment(QRFragment)
         bottom_nav.setOnNavigationItemSelectedListener {
             when (it.itemId){
                 R.id.nav_perfil -> makeCurrentFragment(registroOIniciodesesion)
