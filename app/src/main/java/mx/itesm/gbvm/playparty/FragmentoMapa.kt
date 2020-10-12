@@ -25,6 +25,11 @@ class FragmentoMapa : Fragment(){
     private  val database = FirebaseDatabase.getInstance()
     private lateinit var referencia: DatabaseReference
 
+    fun cargarDatos(v: View){
+        val establecimiento = Establecimiento(123.12,123.42,"LuismiBar", "EsteEsUnID")
+        referencia.push().setValue(establecimiento)
+    }
+
     @SuppressLint("MissingPermission")
     private val callback = OnMapReadyCallback { googleMap ->
         googleMap.isMyLocationEnabled = true
