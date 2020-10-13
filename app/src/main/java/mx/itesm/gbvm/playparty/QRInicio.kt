@@ -15,13 +15,21 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.android.synthetic.main.fragment_iniciar_sesion.*
 import kotlinx.android.synthetic.main.fragment_qr.*
-import kotlinx.android.synthetic.main.fragment_registrar.*
+import kotlinx.android.synthetic.main.fragment_registrar.etEmail
+import kotlinx.android.synthetic.main.fragment_registrar.etPassword
 import kotlinx.android.synthetic.main.qr_inicio.*
 
 
@@ -32,10 +40,10 @@ class QRInicio : AppCompatActivity(), GPSListener {
 
     var idMusica = null
     var BotonValido = false
-    //Luismi la Rego
+
     //Google Autenticador
     private val LOGIN_GOOGLE: Int = 500
-    private lateinit var mGoogleSignInClient: String
+    private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mAuth: FirebaseAuth
 
     //QR
@@ -53,6 +61,17 @@ class QRInicio : AppCompatActivity(), GPSListener {
         setContentView(R.layout.qr_inicio)
 
         mAuth = FirebaseAuth.getInstance()
+        //Autenticar con cuenta de Google
+        // Configure Google Sign In
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .build()
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        val account  = GoogleSignIn.getLastSignedInAccount(this)
+        updateUIGoogle(account)
+        //configurarBtnGoogle()
 
         val perfilFragment = FragmentoPerfil()
         val musicaFragment = FragmentoMusica()
@@ -78,6 +97,9 @@ class QRInicio : AppCompatActivity(), GPSListener {
             true
         }
     }
+
+
+
 
     //Botones
     fun scanQRCode(v: View){
@@ -136,7 +158,10 @@ class QRInicio : AppCompatActivity(), GPSListener {
                 CODIGO_PERMISO_GPS
             )
         }
-        val cameraJustificacion = ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.CAMERA)
+        val cameraJustificacion = ActivityCompat.shouldShowRequestPermissionRationale(
+            this,
+            Manifest.permission.CAMERA
+        )
         if (cameraJustificacion){
             mostrarDialogo("Necesitas acceso a la camara para poder escanear QR codes.")
         }else {
@@ -232,7 +257,7 @@ class QRInicio : AppCompatActivity(), GPSListener {
         registrarCuenta(email, password)
         makeCurrentFragment(FragmentoPerfil())
     }
-    fun registrarCuenta(email: String, password:String){
+    fun registrarCuenta(email: String, password: String){
         mAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(
                 this
@@ -291,7 +316,7 @@ class QRInicio : AppCompatActivity(), GPSListener {
 
             }
     }
-    fun btnCerrarSesion(v:View){
+    fun btnCerrarSesion(v: View){
         mAuth.signOut()
         println("logOut exitoso")
         Toast.makeText(
@@ -299,5 +324,48 @@ class QRInicio : AppCompatActivity(), GPSListener {
             Toast.LENGTH_SHORT
         ).show()
         makeCurrentFragment(Registro_o_InicioDeSesion())
+    }
+
+    private fun updateUIGoogle(account: GoogleSignInAccount?) {
+        if(account != null){
+            println("Login Google exitoso")
+            println("Nombre: ${account.displayName}")
+            println("Correo: ${account.email}")
+            println("ID: ${account.id}")
+        }else{
+            println("No a hecho login en Google")
+        }
+    }
+
+    private fun configurarBtnGoogle() {
+        sign_in_button.setOnClickListener{
+            val intGoogle = mGoogleSignInClient.signInIntent
+            startActivityForResult(intGoogle, LOGIN_GOOGLE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode === LOGIN_GOOGLE) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleSignInResult(task)
+        }
+    }
+
+    private fun handleSignInResult(task: Task<GoogleSignInAccount>) {
+        try {
+            val account: GoogleSignInAccount = task.getResult(ApiException::class.java)!!
+
+            // Signed in successfully, show authenticated UI.
+            updateUIGoogle(account)
+        } catch (e: ApiException) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            println("signInResult:failed code= ${e.statusCode}")
+            updateUIGoogle(null)
+        }
     }
 }
