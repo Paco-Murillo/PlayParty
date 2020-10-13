@@ -26,6 +26,8 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.fragment_iniciar_sesion.*
 import kotlinx.android.synthetic.main.fragment_qr.*
 import kotlinx.android.synthetic.main.fragment_registrar.etEmail
@@ -45,6 +47,9 @@ class QRInicio : AppCompatActivity(), GPSListener {
     private val LOGIN_GOOGLE: Int = 500
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mAuth: FirebaseAuth
+
+    private lateinit var database: FirebaseDatabase
+    private lateinit var listaDatabase: DatabaseReference
 
     //QR
     //private lateinit var
@@ -96,10 +101,14 @@ class QRInicio : AppCompatActivity(), GPSListener {
             }
             true
         }
+
+        //Base de datos
+        database = FirebaseDatabase.getInstance()
     }
 
-
-
+    private fun instanciarLista(string: String){
+        listaDatabase = database.getReference("https://playparty-a9dd9.firebaseio.com/Lists/active/${string}")
+    }
 
     //Botones
     fun scanQRCode(v: View){
@@ -113,6 +122,7 @@ class QRInicio : AppCompatActivity(), GPSListener {
         val frame: Frame = Frame.Builder().setBitmap(BitmapFactory.decodeFile("puppy.png")).build()
         val barcodes = detector.detect(frame)
         val thisCode = barcodes.valueAt(0)
+        instanciarLista(thisCode.rawValue)
     }
 
     fun showQRCode(v: View){
@@ -120,7 +130,7 @@ class QRInicio : AppCompatActivity(), GPSListener {
     }
 
     fun validarID(v: View){
-
+        instanciarLista(etSearch.text.toString())
     }
 
     fun btnFragInicioSesion(v: View){
