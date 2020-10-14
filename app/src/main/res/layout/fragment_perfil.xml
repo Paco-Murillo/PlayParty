@@ -50,7 +50,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:background="#000000"
-        android:onClick="btnFragBackIniReg"
+        android:onClick="boton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/abc_vector_test" />
@@ -213,18 +213,6 @@
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/btnInicio3"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="64dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="16dp"
-            android:background="#AA64E5"
-            android:onClick="btnCerrarSesion"
-            android:text="Cerrar Sesión"
-            android:textColor="#FFFFFF" />
 
     </LinearLayout>
 
