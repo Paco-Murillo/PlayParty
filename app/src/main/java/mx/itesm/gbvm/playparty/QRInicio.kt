@@ -26,13 +26,15 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.*
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import kotlinx.android.synthetic.main.fragment_iniciar_sesion.*
 import kotlinx.android.synthetic.main.fragment_qr.*
-import kotlinx.android.synthetic.main.fragment_registrar.etEmail
-import kotlinx.android.synthetic.main.fragment_registrar.etPassword
 import kotlinx.android.synthetic.main.qr_inicio.*
+import kotlinx.android.synthetic.main.fragment_registro.etEmail
+import kotlinx.android.synthetic.main.fragment_registro.etPassword
+import kotlinx.android.synthetic.main.fragment_inicio_sesion.*
+
 
 
 class QRInicio : AppCompatActivity(), GPSListener {
@@ -40,19 +42,19 @@ class QRInicio : AppCompatActivity(), GPSListener {
     private val CODIGO_PERMISO_GPS: Int = 200
     private var posicion: Location? = null
 
-    var idMusica = null
-    var BotonValido = false
+    // Validacion ID
+    var idMusica:String = ""
+    var BotonValido: Boolean = false
+    private  val database = FirebaseDatabase.getInstance()
+    private lateinit var referencia: DatabaseReference
+
 
     //Google Autenticador
     private val LOGIN_GOOGLE: Int = 500
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mAuth: FirebaseAuth
-
-    private lateinit var database: FirebaseDatabase
     private lateinit var listaDatabase: DatabaseReference
 
-    //QR
-    //private lateinit var
 
     private fun makeCurrentFragment(fragment: Fragment) =
         supportFragmentManager.beginTransaction().apply {
@@ -76,18 +78,14 @@ class QRInicio : AppCompatActivity(), GPSListener {
 
         val account  = GoogleSignIn.getLastSignedInAccount(this)
         updateUIGoogle(account)
-        //configurarBtnGoogle()
 
-        val perfilFragment = FragmentoPerfil()
         val musicaFragment = FragmentoMusica()
         val mapaFragment = FragmentoMapa()
         val registroOIniciodesesion = Registro_o_InicioDeSesion()
-        val registroFragment = FragmentoRegistro()
-        val inicioSesion = FragmentoInicioSesion()
         val QRFragment = FragmentoQR()
 
         //Fragmento inicial
-        makeCurrentFragment(Registro_o_InicioDeSesion())
+        makeCurrentFragment(QRFragment)
         bottom_nav.setOnNavigationItemSelectedListener {
             when (it.itemId){
                 R.id.nav_perfil -> makeCurrentFragment(registroOIniciodesesion)
@@ -101,9 +99,6 @@ class QRInicio : AppCompatActivity(), GPSListener {
             }
             true
         }
-
-        //Base de datos
-        database = FirebaseDatabase.getInstance()
     }
 
     private fun instanciarLista(string: String){
@@ -111,7 +106,7 @@ class QRInicio : AppCompatActivity(), GPSListener {
     }
 
     //Botones
-    fun scanQRCode(v: View){
+   /*  fun scanQRCode(v: View){
         val detector = BarcodeDetector.Builder(applicationContext)
             .setBarcodeFormats(Barcode.DATA_MATRIX or Barcode.QR_CODE)
             .build()
@@ -123,14 +118,31 @@ class QRInicio : AppCompatActivity(), GPSListener {
         val barcodes = detector.detect(frame)
         val thisCode = barcodes.valueAt(0)
         instanciarLista(thisCode.rawValue)
-    }
+    }*/
 
     fun showQRCode(v: View){
         ivQRCode.setImageBitmap(BitmapFactory.decodeFile("puppy.png"))
     }
 
     fun validarID(v: View){
-        instanciarLista(etSearch.text.toString())
+        idMusica = etSearch.text.toString()
+        referencia = database.getReference("/Establecimientos")
+        referencia.addValueEventListener(object: ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+            }
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (registro in snapshot.children) {
+                    val establecimiento = registro.getValue(mx.itesm.gbvm.playparty.Establecimiento::class.java)
+                    if (establecimiento != null) {
+                        val id = establecimiento.ID
+                        if (id == idMusica){
+                            makeCurrentFragment(FragmentoMusica())
+                            BotonValido = true
+                        }
+                    }
+                }
+            }
+        })
     }
 
     fun btnFragInicioSesion(v: View){

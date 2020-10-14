@@ -33,7 +33,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <Button
-        android:id="@+id/btnInicio"
+        android:id="@+id/button"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -49,7 +49,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <Button
-        android:id="@+id/btnRegistro"
+        android:id="@+id/button3"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -71,7 +71,7 @@
         android:layout_marginTop="24dp"
         android:background="#FFB300"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnInicio" />
+        app:layout_constraintTop_toBottomOf="@+id/button" />
 
     <View
         android:id="@+id/divider3"
@@ -81,7 +81,7 @@
         android:layout_marginEnd="16dp"
         android:background="#FFB300"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnInicio" />
+        app:layout_constraintTop_toBottomOf="@+id/button" />
 
     <ImageView
         android:id="@+id/imageView2"
@@ -91,16 +91,15 @@
         android:src="@android:drawable/btn_radio"
         app:layout_constraintEnd_toStartOf="@+id/divider3"
         app:layout_constraintStart_toEndOf="@+id/divider"
-        app:layout_constraintTop_toBottomOf="@+id/btnInicio" />
+        app:layout_constraintTop_toBottomOf="@+id/button" />
 
     <ImageButton
         android:id="@+id/imageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:background="#000000"
-        android:onClick="btnFragBackIniReg"
         android:src="@drawable/abc_vector_test"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

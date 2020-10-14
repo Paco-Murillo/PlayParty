@@ -21,7 +21,7 @@ class FragmentoInicioSesion() : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_iniciar_sesion, container, false)
+        return inflater.inflate(R.layout.fragment_inicio_sesion, container, false)
     }
 }
 /*
