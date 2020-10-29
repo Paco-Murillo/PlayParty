@@ -15,29 +15,23 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.android.gms.vision.Frame
-import com.google.android.gms.vision.barcode.Barcode
-import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.fragment_qr.*
-import kotlinx.android.synthetic.main.qr_inicio.*
 import kotlinx.android.synthetic.main.fragment_registro.etEmail
 import kotlinx.android.synthetic.main.fragment_registro.etPassword
-import kotlinx.android.synthetic.main.fragment_inicio_sesion.*
+import kotlinx.android.synthetic.main.qr_inicio.*
 
 
-
-class QRInicio : AppCompatActivity(), GPSListener {
+class   QRInicio : AppCompatActivity(), GPSListener {
     private var gps: GPS? = null
     private val CODIGO_PERMISO_GPS: Int = 200
     private var posicion: Location? = null
@@ -68,8 +62,21 @@ class QRInicio : AppCompatActivity(), GPSListener {
         setContentView(R.layout.qr_inicio)
 
         mAuth = FirebaseAuth.getInstance()
+        /*//Funcionalidad
+        val fm: FragmentManager = supportFragmentManager
+        var fragment: Fragment? = fm.findFragmentById(R.id.fragment_container)
+        if (fragment === null) {
+            fragment = FragmentoInicioSesion()
+            fm.beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .commit()
+        }
+
+         */
+
         //Autenticar con cuenta de Google
         // Configure Google Sign In
+
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
             .build()
@@ -78,6 +85,8 @@ class QRInicio : AppCompatActivity(), GPSListener {
 
         val account  = GoogleSignIn.getLastSignedInAccount(this)
         updateUIGoogle(account)
+        configurarBtnGoogle()
+
 
         val musicaFragment = FragmentoMusica()
         val mapaFragment = FragmentoMapa()
@@ -104,7 +113,12 @@ class QRInicio : AppCompatActivity(), GPSListener {
     private fun instanciarLista(string: String){
         listaDatabase = database.getReference("https://playparty-a9dd9.firebaseio.com/Lists/active/${string}")
     }
-
+    private fun configurarBtnGoogle() {
+        sign_in_button.setOnClickListener{
+            val intGoogle = mGoogleSignInClient.signInIntent
+            startActivityForResult(intGoogle, LOGIN_GOOGLE)
+        }
+    }
     //Botones
    /*  fun scanQRCode(v: View){
         val detector = BarcodeDetector.Builder(applicationContext)
@@ -127,15 +141,17 @@ class QRInicio : AppCompatActivity(), GPSListener {
     fun validarID(v: View){
         idMusica = etSearch.text.toString()
         referencia = database.getReference("/Establecimientos")
-        referencia.addValueEventListener(object: ValueEventListener {
+        referencia.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
             }
+
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (registro in snapshot.children) {
-                    val establecimiento = registro.getValue(mx.itesm.gbvm.playparty.Establecimiento::class.java)
+                    val establecimiento =
+                        registro.getValue(mx.itesm.gbvm.playparty.Establecimiento::class.java)
                     if (establecimiento != null) {
                         val id = establecimiento.ID
-                        if (id == idMusica){
+                        if (id == idMusica) {
                             makeCurrentFragment(FragmentoMusica())
                             BotonValido = true
                         }
@@ -347,7 +363,7 @@ class QRInicio : AppCompatActivity(), GPSListener {
         ).show()
         makeCurrentFragment(Registro_o_InicioDeSesion())
     }
-
+    //Goggle methods
     private fun updateUIGoogle(account: GoogleSignInAccount?) {
         if(account != null){
             println("Login Google exitoso")
@@ -359,19 +375,10 @@ class QRInicio : AppCompatActivity(), GPSListener {
         }
     }
 
-    private fun configurarBtnGoogle() {
-        sign_in_button.setOnClickListener{
-            val intGoogle = mGoogleSignInClient.signInIntent
-            startActivityForResult(intGoogle, LOGIN_GOOGLE)
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode === LOGIN_GOOGLE) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
+        if (requestCode == LOGIN_GOOGLE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
         }
