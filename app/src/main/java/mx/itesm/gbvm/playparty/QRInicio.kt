@@ -41,6 +41,7 @@ class   QRInicio : AppCompatActivity(), GPSListener {
     var BotonValido: Boolean = false
     private  val database = FirebaseDatabase.getInstance()
     private lateinit var referencia: DatabaseReference
+    private var Pablo = ""
 
 
     //Google Autenticador
@@ -62,20 +63,6 @@ class   QRInicio : AppCompatActivity(), GPSListener {
         setContentView(R.layout.qr_inicio)
 
         mAuth = FirebaseAuth.getInstance()
-        /*//Funcionalidad
-        val fm: FragmentManager = supportFragmentManager
-        var fragment: Fragment? = fm.findFragmentById(R.id.fragment_container)
-        if (fragment === null) {
-            fragment = FragmentoInicioSesion()
-            fm.beginTransaction()
-                .add(R.id.fragment_container, fragment)
-                .commit()
-        }
-
-         */
-
-        //Autenticar con cuenta de Google
-        // Configure Google Sign In
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
@@ -85,19 +72,31 @@ class   QRInicio : AppCompatActivity(), GPSListener {
 
         val account  = GoogleSignIn.getLastSignedInAccount(this)
         updateUIGoogle(account)
-        configurarBtnGoogle()
+
 
 
         val musicaFragment = FragmentoMusica()
         val mapaFragment = FragmentoMapa()
         val registroOIniciodesesion = Registro_o_InicioDeSesion()
         val QRFragment = FragmentoQR()
+        val fragInicio = FragmentoInicioSesion()
+        val fragRegistro = FragmentoRegistro()
+        val fragPerfil = FragmentoPerfil()
 
         //Fragmento inicial
         makeCurrentFragment(QRFragment)
         bottom_nav.setOnNavigationItemSelectedListener {
             when (it.itemId){
-                R.id.nav_perfil -> makeCurrentFragment(registroOIniciodesesion)
+                R.id.nav_perfil ->
+                    if(Pablo == "Inicio"){
+                        makeCurrentFragment(fragInicio)
+                    }else if(Pablo == "Registro"){
+                        makeCurrentFragment(fragRegistro)
+                    }else if(Pablo == "Perfil"){
+                        makeCurrentFragment(fragPerfil)
+                    }else{
+                        makeCurrentFragment(registroOIniciodesesion)
+                    }
                 R.id.nav_Musica ->
                     if (BotonValido) {
                         makeCurrentFragment(musicaFragment)
@@ -113,12 +112,7 @@ class   QRInicio : AppCompatActivity(), GPSListener {
     private fun instanciarLista(string: String){
         listaDatabase = database.getReference("https://playparty-a9dd9.firebaseio.com/Lists/active/${string}")
     }
-    private fun configurarBtnGoogle() {
-        sign_in_button.setOnClickListener{
-            val intGoogle = mGoogleSignInClient.signInIntent
-            startActivityForResult(intGoogle, LOGIN_GOOGLE)
-        }
-    }
+
     //Botones
    /*  fun scanQRCode(v: View){
         val detector = BarcodeDetector.Builder(applicationContext)
@@ -162,12 +156,15 @@ class   QRInicio : AppCompatActivity(), GPSListener {
     }
 
     fun btnFragInicioSesion(v: View){
+        Pablo = "Inicio"
         makeCurrentFragment(FragmentoInicioSesion())
     }
     fun btnFragRegistro(v: View){
+        Pablo = "Registro"
         makeCurrentFragment(FragmentoRegistro())
     }
     fun btnFragBackIniReg(v: View){
+        Pablo = ""
         makeCurrentFragment(Registro_o_InicioDeSesion())
     }
 
@@ -292,8 +289,9 @@ class   QRInicio : AppCompatActivity(), GPSListener {
     fun btnRegistrarCuenta(v: View){
         val email = etEmail.text.toString()
         val password = etPassword.text.toString()
-        registrarCuenta(email, password)
-        makeCurrentFragment(FragmentoPerfil())
+        if(email != "" && password != "") {
+            registrarCuenta(email, password)
+        }
     }
     fun registrarCuenta(email: String, password: String){
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -309,6 +307,8 @@ class   QRInicio : AppCompatActivity(), GPSListener {
                         Toast.LENGTH_SHORT
                     ).show()
                     updateUI(user)
+                    Pablo = "Perfil"
+                    makeCurrentFragment(FragmentoPerfil())
                 } else {
                     // If sign in fails, display a message to the user.
                     println("createUserWithEmail:failure${task.exception}")
@@ -324,8 +324,9 @@ class   QRInicio : AppCompatActivity(), GPSListener {
     fun btnIniciarSesion(v: View){
         val email = etEmail.text.toString()
         val password = etPassword.text.toString()
-        iniciarSesion(email, password)
-        makeCurrentFragment(FragmentoPerfil())
+        if(email != "" && password != "") {
+            iniciarSesion(email, password)
+        }
     }
     fun iniciarSesion(email: String, password: String){
         mAuth.signInWithEmailAndPassword(email, password)
@@ -341,6 +342,8 @@ class   QRInicio : AppCompatActivity(), GPSListener {
                     ).show()
                     val user = mAuth.currentUser
                     updateUI(user)
+                    Pablo = "Perfil"
+                    makeCurrentFragment(FragmentoPerfil())
                 } else {
                     // If sign in fails, display a message to the user.
                     println("signInWithEmail:failure ${task.exception}")
