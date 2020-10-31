@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
@@ -15,26 +14,27 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.vision.barcode.Barcode
+import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.fragment_qr.*
-import kotlinx.android.synthetic.main.fragment_registro.etEmail
-import kotlinx.android.synthetic.main.fragment_registro.etPassword
+import kotlinx.android.synthetic.main.fragment_registro.*
 import kotlinx.android.synthetic.main.qr_inicio.*
-
 
 class   QRInicio : AppCompatActivity(), GPSListener {
     private var gps: GPS? = null
     private val CODIGO_PERMISO_GPS: Int = 200
     private var posicion: Location? = null
+
+    //private val bar:BarcodeGra
 
     // Validacion ID
     var idMusica:String = ""
@@ -49,6 +49,10 @@ class   QRInicio : AppCompatActivity(), GPSListener {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mAuth: FirebaseAuth
     private lateinit var listaDatabase: DatabaseReference
+
+    //qr
+    private val RC_BARCODE_CAPTURE = 6669
+    private val SCAN_QR = 6670
 
 
     private fun makeCurrentFragment(fragment: Fragment) =
@@ -122,15 +126,11 @@ class   QRInicio : AppCompatActivity(), GPSListener {
             mostrarDialogo("No se pudo configurar el detector")
             return
         }
-        val frame: Frame = Frame.Builder().setBitmap(BitmapFactory.decodeFile("puppy.png")).build()
+        val frame: Frame = Frame.Builder().setBitmap(BitmapFactory.decodeFile("")).build()
         val barcodes = detector.detect(frame)
         val thisCode = barcodes.valueAt(0)
         instanciarLista(thisCode.rawValue)
     }*/
-
-    fun showQRCode(v: View){
-        ivQRCode.setImageBitmap(BitmapFactory.decodeFile("puppy.png"))
-    }
 
     fun validarID(v: View){
         idMusica = etSearch.text.toString()
@@ -379,11 +379,17 @@ class   QRInicio : AppCompatActivity(), GPSListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == LOGIN_GOOGLE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
+        } else if (requestCode == RC_BARCODE_CAPTURE) {
+            if (resultCode == SCAN_QR) {
+                if (data != null) {
+                    val datos = data.data.toString()
+                }
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 

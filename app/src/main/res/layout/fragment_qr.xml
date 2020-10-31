@@ -6,28 +6,16 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <ImageView
-        android:id="@+id/ivQRCode"
-        android:layout_width="124dp"
-        android:layout_height="107dp"
-        android:layout_marginStart="144dp"
-        android:layout_marginTop="96dp"
-        android:layout_marginEnd="144dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/design_default_color_background" />
-
     <Button
         android:id="@+id/scanQR"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="148dp"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="140dp"
+        android:onClick="scanQR"
         android:text="Escanear QR"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivQRCode" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView4"

@@ -24,6 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".LoginGoogle"></activity>
+        <activity android:name=".BarcodeCaptureActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
