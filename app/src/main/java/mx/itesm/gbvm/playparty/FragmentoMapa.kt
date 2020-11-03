@@ -1,6 +1,7 @@
 package mx.itesm.gbvm.playparty
 
 import android.annotation.SuppressLint
+import android.location.Location
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
@@ -15,6 +16,10 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.database.*
 
 class FragmentoMapa : Fragment(){
+
+    private var gps: GPS? = null
+    private val CODIGO_PERMISO_GPS: Int = 200
+    private var posicion: Location? = null
 
     private  val database = FirebaseDatabase.getInstance()
     private lateinit var referencia: DatabaseReference

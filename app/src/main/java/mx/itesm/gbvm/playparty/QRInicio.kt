@@ -30,12 +30,14 @@ import com.google.firebase.database.*
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
+import com.spotify.protocol.types.PlayerState
+import com.spotify.protocol.types.Track
 import kotlinx.android.synthetic.main.fragment_qr.*
 import kotlinx.android.synthetic.main.fragment_registro.*
 import kotlinx.android.synthetic.main.qr_inicio.*
 
 
-class   QRInicio : AppCompatActivity(), GPSListener {
+class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListener {
     private var gps: GPS? = null
     private val CODIGO_PERMISO_GPS: Int = 200
     private var posicion: Location? = null
@@ -84,7 +86,6 @@ class   QRInicio : AppCompatActivity(), GPSListener {
         updateUIGoogle(account)
 
 
-
         val musicaFragment = FragmentoMusica()
         val mapaFragment = FragmentoMapa()
         val registroOIniciodesesion = Registro_o_InicioDeSesion()
@@ -95,6 +96,8 @@ class   QRInicio : AppCompatActivity(), GPSListener {
 
         //Fragmento inicial
         makeCurrentFragment(QRFragment)
+        val view: View = bottom_nav.findViewById(R.id.nav_Musica)
+        view.performClick()
         bottom_nav.setOnNavigationItemSelectedListener {
             when (it.itemId){
                 R.id.nav_perfil ->
@@ -410,7 +413,14 @@ class   QRInicio : AppCompatActivity(), GPSListener {
                     mSpotifyAppRemote = spotifyAppRemote
                     val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Conectado!", Snackbar.LENGTH_SHORT)
                     mySnackbar.show()
-
+                    mSpotifyAppRemote!!.playerApi
+                        .subscribeToPlayerState()
+                        .setEventCallback { playerState: PlayerState ->
+                            val track: Track? = playerState.track
+                            if (track != null) {
+                                Log.d("MainActivity", track.name.toString() + " by " + track.artist.name)
+                            }
+                        }
                     // Now you can start interacting with App Remote
                     connected()
                 }
@@ -427,17 +437,25 @@ class   QRInicio : AppCompatActivity(), GPSListener {
 
     //Spotify
     private val CLIENT_ID: String? = "571410421d934710ba3a3f201b170b50"
-    private val REDIRECT_URI = "https://localhost:8888/callback"
+    private val REDIRECT_URI = "http://mx.itesm.gbvm.playparty/callback"
     private var mSpotifyAppRemote: SpotifyAppRemote? = null
 
 
 
     private fun connected() {
-        // Then we will write some more code here.
+        mSpotifyAppRemote?.getPlayerApi()?.play("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
     }
 
     override fun onStop() {
         super.onStop()
         // Aaand we will finish off here.
+    }
+
+    override fun onConnected(p0: SpotifyAppRemote?) {
+
+    }
+
+    override fun onFailure(p0: Throwable?) {
+
     }
 }
