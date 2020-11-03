@@ -437,8 +437,9 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
     //Spotify
     private val CLIENT_ID: String? = "571410421d934710ba3a3f201b170b50"
-    private val REDIRECT_URI = "http://mx.itesm.gbvm.playparty/callback"
+    private val REDIRECT_URI = "https://mx.itesm.gbvm.playparty/callback"
     private var mSpotifyAppRemote: SpotifyAppRemote? = null
+    //Hola
 
 
 
