@@ -51,6 +51,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:19.4.0'
     implementation 'com.google.android.gms:play-services-auth:18.1.0'
 
+    //Spotify
+    implementation "com.google.code.gson:gson:2.8.5"
+    implementation project(':spotify-app-remote')
+
 
     implementation 'com.google.firebase:firebase-database:19.5.0'
     testImplementation 'junit:junit:4.12'

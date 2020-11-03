@@ -1,5 +1,7 @@
 package mx.itesm.gbvm.playparty
 
+//Spoty
+
 import android.Manifest
 import android.app.AlertDialog
 import android.content.DialogInterface
@@ -9,6 +11,7 @@ import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,14 +23,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.android.gms.vision.barcode.Barcode
-import com.google.android.gms.vision.barcode.BarcodeDetector
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.spotify.android.appremote.api.ConnectionParams
+import com.spotify.android.appremote.api.Connector
+import com.spotify.android.appremote.api.SpotifyAppRemote
 import kotlinx.android.synthetic.main.fragment_qr.*
 import kotlinx.android.synthetic.main.fragment_registro.*
 import kotlinx.android.synthetic.main.qr_inicio.*
+
 
 class   QRInicio : AppCompatActivity(), GPSListener {
     private var gps: GPS? = null
@@ -92,13 +98,13 @@ class   QRInicio : AppCompatActivity(), GPSListener {
         bottom_nav.setOnNavigationItemSelectedListener {
             when (it.itemId){
                 R.id.nav_perfil ->
-                    if(Pablo == "Inicio"){
+                    if (Pablo == "Inicio") {
                         makeCurrentFragment(fragInicio)
-                    }else if(Pablo == "Registro"){
+                    } else if (Pablo == "Registro") {
                         makeCurrentFragment(fragRegistro)
-                    }else if(Pablo == "Perfil"){
+                    } else if (Pablo == "Perfil") {
                         makeCurrentFragment(fragPerfil)
-                    }else{
+                    } else {
                         makeCurrentFragment(registroOIniciodesesion)
                     }
                 R.id.nav_Musica ->
@@ -116,21 +122,6 @@ class   QRInicio : AppCompatActivity(), GPSListener {
     private fun instanciarLista(string: String){
         listaDatabase = database.getReference("https://playparty-a9dd9.firebaseio.com/Lists/active/${string}")
     }
-
-    //Botones
-   /*  fun scanQRCode(v: View){
-        val detector = BarcodeDetector.Builder(applicationContext)
-            .setBarcodeFormats(Barcode.DATA_MATRIX or Barcode.QR_CODE)
-            .build()
-        if (!detector.isOperational) {
-            mostrarDialogo("No se pudo configurar el detector")
-            return
-        }
-        val frame: Frame = Frame.Builder().setBitmap(BitmapFactory.decodeFile("")).build()
-        val barcodes = detector.detect(frame)
-        val thisCode = barcodes.valueAt(0)
-        instanciarLista(thisCode.rawValue)
-    }*/
 
     fun validarID(v: View){
         idMusica = etSearch.text.toString()
@@ -271,11 +262,7 @@ class   QRInicio : AppCompatActivity(), GPSListener {
     }
 
     //Google Autenticador
-    override fun onStart() {
-        super.onStart()
-        val currentUser = mAuth.currentUser
-        updateUI(currentUser)
-    }
+
 
     private fun updateUI(currentUser: FirebaseUser?) {
         if(currentUser!= null) {
@@ -405,5 +392,52 @@ class   QRInicio : AppCompatActivity(), GPSListener {
             println("signInResult:failed code= ${e.statusCode}")
             updateUIGoogle(null)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser = mAuth.currentUser
+        updateUI(currentUser)
+
+        val connectionParams = ConnectionParams.Builder(CLIENT_ID)
+            .setRedirectUri(REDIRECT_URI)
+            .showAuthView(true)
+            .build()
+
+        SpotifyAppRemote.connect(this, connectionParams,
+            object : Connector.ConnectionListener {
+                override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
+                    mSpotifyAppRemote = spotifyAppRemote
+                    val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Conectado!", Snackbar.LENGTH_SHORT)
+                    mySnackbar.show()
+
+                    // Now you can start interacting with App Remote
+                    connected()
+                }
+
+                override fun onFailure(throwable: Throwable) {
+                    val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Fallo!", Snackbar.LENGTH_SHORT)
+                    mySnackbar.show()
+
+                    // Something went wrong when attempting to connect! Handle errors here
+                }
+            })
+
+    }
+
+    //Spotify
+    private val CLIENT_ID: String? = "571410421d934710ba3a3f201b170b50"
+    private val REDIRECT_URI = "https://localhost:8888/callback"
+    private var mSpotifyAppRemote: SpotifyAppRemote? = null
+
+
+
+    private fun connected() {
+        // Then we will write some more code here.
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // Aaand we will finish off here.
     }
 }
