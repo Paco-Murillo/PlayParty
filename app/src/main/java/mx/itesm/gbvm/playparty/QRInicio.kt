@@ -3,7 +3,9 @@ package mx.itesm.gbvm.playparty
 //Spoty
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,6 +13,7 @@ import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -37,7 +40,7 @@ import kotlinx.android.synthetic.main.fragment_registro.*
 import kotlinx.android.synthetic.main.qr_inicio.*
 
 
-class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListener {
+class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListener, FragmentoQR.OnHeadlineSelectedListener {
     private var gps: GPS? = null
     private val CODIGO_PERMISO_GPS: Int = 200
     private var posicion: Location? = null
@@ -56,12 +59,10 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private val LOGIN_GOOGLE: Int = 500
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mAuth: FirebaseAuth
-    private lateinit var listaDatabase: DatabaseReference
 
     //qr
-    private val RC_BARCODE_CAPTURE = 6669
-    private val SCAN_QR = 6670
-
+    val SCAN_QR = 6670
+    private lateinit var listaDatabase: DatabaseReference
 
     private fun makeCurrentFragment(fragment: Fragment) =
         supportFragmentManager.beginTransaction().apply {
@@ -123,7 +124,15 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     }
 
     private fun instanciarLista(string: String){
-        listaDatabase = database.getReference("https://playparty-a9dd9.firebaseio.com/Lists/active/${string}")
+        // listaDatabase = database.getReference("https://playparty-a9dd9.firebaseio.com/Lists/active/${string}")
+        mostrarDialogoStr("https://playparty-a9dd9.firebaseio.com/Lists/active/${string}")
+    }
+
+    private fun mostrarDialogoStr(s: String) {
+        val dialogo = AlertDialog.Builder(this)
+        dialogo.setMessage(s)
+            .setPositiveButton("Aceptar") { _, _ -> }
+        dialogo.show()
     }
 
     fun validarID(v: View){
@@ -153,10 +162,12 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         Pablo = "Inicio"
         makeCurrentFragment(FragmentoInicioSesion())
     }
+
     fun btnFragRegistro(v: View){
         Pablo = "Registro"
         makeCurrentFragment(FragmentoRegistro())
     }
+
     fun btnFragBackIniReg(v: View){
         Pablo = ""
         makeCurrentFragment(Registro_o_InicioDeSesion())
@@ -209,11 +220,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         return estadoPermiso == PackageManager.PERMISSION_GRANTED
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CODIGO_PERMISO_GPS) {
             if (grantResults.isEmpty()) {
@@ -249,7 +256,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private fun mostrarDialogo(string: String) {
         val dialogo = AlertDialog.Builder(this)
         dialogo.setMessage(string)
-            .setPositiveButton("Aceptar") { dialog, which ->
+            .setPositiveButton("Aceptar") { _, _ ->
                 ActivityCompat.requestPermissions(
                     this,
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -276,6 +283,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         }
         //Actualizar con la sesión iniciada
     }
+
     fun btnRegistrarCuenta(v: View){
         val email = etEmail.text.toString()
         val password = etPassword.text.toString()
@@ -283,6 +291,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
             registrarCuenta(email, password)
         }
     }
+
     fun registrarCuenta(email: String, password: String){
         mAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(
@@ -311,6 +320,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
             }
     }
+
     fun btnIniciarSesion(v: View){
         val email = etEmail.text.toString()
         val password = etPassword.text.toString()
@@ -318,6 +328,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
             iniciarSesion(email, password)
         }
     }
+
     fun iniciarSesion(email: String, password: String){
         mAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(
@@ -347,6 +358,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
             }
     }
+
     fun btnCerrarSesion(v: View){
         mAuth.signOut()
         println("logOut exitoso")
@@ -372,15 +384,28 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         if (requestCode == LOGIN_GOOGLE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
-        } else if (requestCode == RC_BARCODE_CAPTURE) {
-            if (resultCode == SCAN_QR) {
+        } else if (requestCode == SCAN_QR){
+            if(resultCode == Activity.RESULT_OK){
                 if (data != null) {
-                    val datos = data.data.toString()
+                    println(data.data.toString() + " Leida")
+                    instanciarLista(data.data.toString())
                 }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    override fun onAttachFragment(fragment: Fragment) {
+        super.onAttachFragment(fragment)
+        if(fragment is FragmentoQR){
+            fragment.setOnHeadlineSelectedListener(this)
+        }
+    }
+
+    override fun onArticleSelected(string: String) {
+        println("$string Leida Activity")
+        instanciarLista(string)
     }
 
     private fun handleSignInResult(task: Task<GoogleSignInAccount>) {
@@ -445,11 +470,6 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
     private fun connected() {
         mSpotifyAppRemote?.getPlayerApi()?.play("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
-    }
-
-    override fun onStop() {
-        super.onStop()
-        // Aaand we will finish off here.
     }
 
     override fun onConnected(p0: SpotifyAppRemote?) {

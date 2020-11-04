@@ -7,6 +7,11 @@ android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
 
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
     defaultConfig {
         applicationId "mx.itesm.gbvm.playparty"
         minSdkVersion 21
@@ -34,6 +39,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:19.2.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.1.0'
+    implementation 'com.google.android.gms:play-services-vision:15.+'
     //Networking
     implementation 'com.amitshekhar.android:jackson-android-networking:1.0.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
