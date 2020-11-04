@@ -5,7 +5,6 @@ package mx.itesm.gbvm.playparty
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -13,7 +12,7 @@ import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.util.AttributeSet
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -28,6 +27,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.spotify.android.appremote.api.ConnectionParams
@@ -35,6 +35,7 @@ import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Track
+import kotlinx.android.synthetic.main.fragment_inicio_sesion.*
 import kotlinx.android.synthetic.main.fragment_qr.*
 import kotlinx.android.synthetic.main.fragment_registro.*
 import kotlinx.android.synthetic.main.qr_inicio.*
@@ -290,6 +291,20 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         if(email != "" && password != "") {
             registrarCuenta(email, password)
         }
+        if(TextUtils.isEmpty(email)){
+            Toast.makeText(
+                this@QRInicio, "Debes escribir un correo",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        if(TextUtils.isEmpty(password)){
+            Toast.makeText(
+                this@QRInicio, "Debes escribir una contraseña",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
     }
 
     fun registrarCuenta(email: String, password: String){
@@ -308,25 +323,49 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                     updateUI(user)
                     Pablo = "Perfil"
                     makeCurrentFragment(FragmentoPerfil())
-                } else {
-                    // If sign in fails, display a message to the user.
-                    println("createUserWithEmail:failure${task.exception}")
-                    Toast.makeText(
-                        this@QRInicio, "Authentication failed.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    updateUI(null)
                 }
+                if(task.exception is FirebaseAuthUserCollisionException){
+                        Toast.makeText(
+                            this@QRInicio, "El correo ya existe.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        updateUI(null)
+                }
+                else{
+                        // If sign in fails, display a message to the user.
+                        println("createUserWithEmail:failure${task.exception}")
+                        Toast.makeText(
+                            this@QRInicio, "Authentication failed.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        updateUI(null)
+                }
+
+
 
             }
     }
 
     fun btnIniciarSesion(v: View){
-        val email = etEmail.text.toString()
-        val password = etPassword.text.toString()
+        val email = etIniEmail.text.toString()
+        val password = etIniPassword.text.toString()
         if(email != "" && password != "") {
             iniciarSesion(email, password)
         }
+        if(TextUtils.isEmpty(email)){
+            Toast.makeText(
+                this@QRInicio, "Debes escribir un correo",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        if(TextUtils.isEmpty(password)){
+            Toast.makeText(
+                this@QRInicio, "Debes escribir una contraseña",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
     }
 
     fun iniciarSesion(email: String, password: String){
