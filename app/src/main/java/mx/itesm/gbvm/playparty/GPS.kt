@@ -105,4 +105,5 @@ class GPS
 interface GPSListener
 {
     fun actualizarPosicion(posicion: Location)
+
 }
