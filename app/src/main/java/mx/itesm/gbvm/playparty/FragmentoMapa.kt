@@ -8,9 +8,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.gms.maps.CameraUpdateFactory
 
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.database.*
@@ -40,6 +42,9 @@ class FragmentoMapa : Fragment(){
                         val nombre = establecimiento.nombre
                         val latLng = LatLng(establecimiento.latitud, establecimiento.longitud)
                         googleMap.addMarker(MarkerOptions().position(latLng).title(nombre))
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
+                        val camara = CameraPosition.Builder().target(latLng).zoom(18f).build()
+                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camara))
                     }
                 }
             }

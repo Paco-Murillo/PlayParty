@@ -15,6 +15,7 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
     <application
         android:name=".AppPlayParty"
         android:allowBackup="true"
@@ -24,7 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".LoginGoogle"></activity>
-        <activity android:name=".BarcodeCaptureActivity"></activity>
+        <activity android:name=".Scanner"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

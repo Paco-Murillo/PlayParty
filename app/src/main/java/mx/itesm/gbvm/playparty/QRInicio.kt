@@ -411,15 +411,14 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
             object : Connector.ConnectionListener {
                 override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
                     mSpotifyAppRemote = spotifyAppRemote
-                        val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Conectado!", Snackbar.LENGTH_SHORT)
-                        mySnackbar.show()
+                    val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Conectado!", Snackbar.LENGTH_SHORT)
+                    mySnackbar.show()
                     mSpotifyAppRemote!!.playerApi
                         .subscribeToPlayerState()
                         .setEventCallback { playerState: PlayerState ->
                             val track: Track? = playerState.track
                             if (track != null) {
-                                val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), track.name.toString() + " by " + track.artist.name, Snackbar.LENGTH_SHORT)
-                                mySnackbar.show()
+                                Log.d("MainActivity", track.name.toString() + " by " + track.artist.name)
                             }
                         }
                     // Now you can start interacting with App Remote
@@ -440,6 +439,8 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private val CLIENT_ID: String? = "571410421d934710ba3a3f201b170b50"
     private val REDIRECT_URI = "https://mx.itesm.gbvm.playparty/callback"
     private var mSpotifyAppRemote: SpotifyAppRemote? = null
+    //Hola
+
 
 
     private fun connected() {
@@ -448,7 +449,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
     override fun onStop() {
         super.onStop()
-
+        // Aaand we will finish off here.
     }
 
     override fun onConnected(p0: SpotifyAppRemote?) {
