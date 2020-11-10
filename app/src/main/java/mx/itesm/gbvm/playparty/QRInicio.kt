@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -32,6 +33,7 @@ import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Track
+import kotlinx.android.synthetic.main.fragment_musica.*
 import kotlinx.android.synthetic.main.fragment_qr.*
 import kotlinx.android.synthetic.main.fragment_registro.*
 import kotlinx.android.synthetic.main.qr_inicio.*
@@ -60,7 +62,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
     //qr
     private val RC_BARCODE_CAPTURE = 6669
-    private val SCAN_QR = 6670
+    val SCAN_QR = 6670
 
 
     private fun makeCurrentFragment(fragment: Fragment) =
@@ -113,6 +115,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                 R.id.nav_Musica ->
                     if (BotonValido) {
                         makeCurrentFragment(musicaFragment)
+                        configurarRecyclerView()
                     } else {
                         makeCurrentFragment(QRFragment)
                     }
@@ -132,7 +135,6 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         referencia.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
             }
-
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (registro in snapshot.children) {
                     val establecimiento =
@@ -143,10 +145,23 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                             makeCurrentFragment(FragmentoMusica())
                             BotonValido = true
                         }
+                        else{
+                            val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "ID Invalido!", Snackbar.LENGTH_LONG)
+                            mySnackbar.show()
+                        }
+                    }
+                    else{
+                        val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "ID Invalido!", Snackbar.LENGTH_LONG)
+                        mySnackbar.show()
                     }
                 }
             }
         })
+    }
+
+    fun btnQR(v: View){
+        BotonValido = false
+        makeCurrentFragment(FragmentoQR())
     }
 
     fun btnFragInicioSesion(v: View){
@@ -435,6 +450,24 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
     }
 
+    //Musica
+
+    private fun configurarRecyclerView() {
+        val admLayout = LinearLayoutManager(this)
+        val arrTarjetas = crearArrTarjetas()
+
+        val adaptador = Adaptador(arrTarjetas)
+        rvTarjetas.layoutManager = admLayout
+        rvTarjetas.adapter = adaptador
+    }
+
+    private fun crearArrTarjetas(): Array<Tarjeta> {
+        return arrayOf(
+            Tarjeta("Song", "Artist", R.drawable.bts, 0),
+            Tarjeta("Song", "Artist", R.drawable.bts, 0)
+        )
+    }
+
     //Spotify
     private val CLIENT_ID: String? = "571410421d934710ba3a3f201b170b50"
     private val REDIRECT_URI = "https://mx.itesm.gbvm.playparty/callback"
@@ -444,7 +477,8 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
 
     private fun connected() {
-        mSpotifyAppRemote?.getPlayerApi()?.play("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
+        mSpotifyAppRemote?.getPlayerApi()?.play("spotify:track:5ejwTEOCsaDEjvhZTcU6lg");
+        //https://open.spotify.com/playlist/2NHIe8QezG9OfUV2ffhTwu?si=7RJrMrsDToStwtNiWQ4_dA
     }
 
     override fun onStop() {
