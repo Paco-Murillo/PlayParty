@@ -36,8 +36,11 @@ import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Track
+import kotlinx.android.synthetic.main.fragment_inicio_sesion.*
 import kotlinx.android.synthetic.main.fragment_qr.*
 import kotlinx.android.synthetic.main.fragment_registro.*
+import kotlinx.android.synthetic.main.fragment_registro.etEmail
+import kotlinx.android.synthetic.main.fragment_registro.etPassword
 import kotlinx.android.synthetic.main.qr_inicio.*
 
 
@@ -73,6 +76,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private fun makeCurrentFragment(fragment: Fragment) =
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.fragment_container, fragment)
+            commit()
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -122,6 +126,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                 R.id.nav_Musica ->
                     if (BotonValido) {
                         makeCurrentFragment(musicaFragment)
+
                     } else {
                         makeCurrentFragment(QRFragment)
                     }
@@ -353,7 +358,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private fun updateUI(currentUser: FirebaseUser?) {
         if(currentUser!= null) {
             println("LogIn exitoso")
-            println("Usuario: ${currentUser?.displayName}")
+            println("Usuario: ${currentUser?.email}")
         }else{
             println("No has hecho login")
         }
@@ -395,10 +400,19 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
             }
     }
     fun btnIniciarSesion(v: View){
-        val email = etEmail.text.toString()
-        val password = etPassword.text.toString()
+        val email = etIniEmail.text.toString()
+        val password = etIniPassword.text.toString()
         if(email != "" && password != "") {
             iniciarSesion(email, password)
+        }else if(email == ""){
+            println("No ha ingresado correo ")
+            Toast.makeText(this@QRInicio, "No ha ingresado correo", Toast.LENGTH_SHORT).show()
+        }else if(password ==""){
+            println("No ha ingresado contraseña")
+            Toast.makeText(this@QRInicio, "No ha ingresado contraseña", Toast.LENGTH_SHORT).show()
+        }else{
+            println("No has ingresado correo y contraseña")
+            Toast.makeText(this@QRInicio, "No ha ingresado correo y contraseña", Toast.LENGTH_SHORT).show()
         }
     }
     fun iniciarSesion(email: String, password: String){
@@ -432,6 +446,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     }
     fun btnCerrarSesion(v: View){
         mAuth.signOut()
+        mGoogleSignInClient.signOut()
         println("logOut exitoso")
         Toast.makeText(
             this@QRInicio, "Sesión Cerrada",
