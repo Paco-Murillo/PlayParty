@@ -70,7 +70,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     //Musica
     private var idPersona = "EsteEsUnID"
     private var playlist = "2NHIe8QezG9OfUV2ffhTwu"
-
+    //Agregue funcionalidad al btnInicioSesión
 
 
     private fun makeCurrentFragment(fragment: Fragment) =
