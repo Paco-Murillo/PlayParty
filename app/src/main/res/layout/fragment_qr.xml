@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
+    <EditText
+        android:id="@+id/ID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginEnd="101dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="ID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="365dp" />
+
     <Button
         android:id="@+id/scanQR"
         android:layout_width="0dp"
@@ -57,5 +70,44 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="160dp"
+        android:layout_marginEnd="163dp"
+        android:onClick="btnIniciarSpotify"
+        android:text="Conectar Spotify"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="254dp" />
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="btnPlaylistChange"
+        android:text="Actualizar lista"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.457"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="507dp" />
+
+    <EditText
+        android:id="@+id/IdPlaylist"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="#000000"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="IdPlayList"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="446dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

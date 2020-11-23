@@ -17,7 +17,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -33,7 +36,6 @@ import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Track
-import kotlinx.android.synthetic.main.fragment_musica.*
 import kotlinx.android.synthetic.main.fragment_qr.*
 import kotlinx.android.synthetic.main.fragment_registro.*
 import kotlinx.android.synthetic.main.qr_inicio.*
@@ -43,8 +45,6 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private var gps: GPS? = null
     private val CODIGO_PERMISO_GPS: Int = 200
     private var posicion: Location? = null
-
-    //private val bar:BarcodeGra
 
     // Validacion ID
     var idMusica:String = ""
@@ -64,15 +64,22 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private val RC_BARCODE_CAPTURE = 6669
     val SCAN_QR = 6670
 
+    //Musica
+    private var idPersona = "EsteEsUnID"
+    private var playlist = "2NHIe8QezG9OfUV2ffhTwu"
+
+
 
     private fun makeCurrentFragment(fragment: Fragment) =
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.fragment_container, fragment)
-            commit()
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         configurarGPS()
+        val args = Bundle()
+        args.putString("playlist", playlist)
+        args.putString("ID", idMusica)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.qr_inicio)
 
@@ -115,7 +122,6 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                 R.id.nav_Musica ->
                     if (BotonValido) {
                         makeCurrentFragment(musicaFragment)
-                        configurarRecyclerView()
                     } else {
                         makeCurrentFragment(QRFragment)
                     }
@@ -157,6 +163,68 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                 }
             }
         })
+    }
+
+    fun btnIniciarSpotify(v: View){
+        val connectionParams = ConnectionParams.Builder(CLIENT_ID)
+            .setRedirectUri(REDIRECT_URI)
+            .showAuthView(true)
+            .build()
+
+        SpotifyAppRemote.connect(this, connectionParams,
+            object : Connector.ConnectionListener {
+                override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
+                    mSpotifyAppRemote = spotifyAppRemote
+                    val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Conectado!", Snackbar.LENGTH_SHORT)
+                    mySnackbar.show()
+                    mSpotifyAppRemote!!.playerApi
+                        .subscribeToPlayerState()
+                        .setEventCallback { playerState: PlayerState ->
+                            val track: Track? = playerState.track
+                            if (track != null) {
+                                Log.d("MainActivity", track.name.toString() + " by " + track.artist.name)
+                            }
+                        }
+                    connected()
+                }
+
+                override fun onFailure(throwable: Throwable) {
+                    val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Fallo!", Snackbar.LENGTH_SHORT)
+                    mySnackbar.show()
+                }
+            })
+    }
+
+    fun btnPlaylistChange(v: View){
+        playlist = IdPlaylist.text.toString()
+        var idPlay = ID.text.toString()
+        val url = " \thttps://api.spotify.com/v1/playlists/$playlist/tracks"
+
+        // Request a string response from the provided URL.
+        val stringRequest = StringRequest(
+            Request.Method.GET, url,
+            Response.Listener<String> { response ->
+                // Display the first 500 characters of the response string.
+                val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Response is: ${response.toString()}", Snackbar.LENGTH_LONG)
+                mySnackbar.show()
+            },
+            Response.ErrorListener {
+                val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "ID Invalido", Snackbar.LENGTH_LONG)
+                mySnackbar.show()
+            })
+    }
+
+    fun btnAddSong(v: View){
+        val myRef = database.getReference(idMusica)
+        val puntos = 0
+        val nombre = "Cancion"
+        val artista = "Artista"
+        val idImagen = 0
+        val ID = "AQUIVAUNID"
+
+        val Tarjeta = Tarjeta(puntos,nombre,artista,idImagen,ID)
+
+        myRef.setValue(Tarjeta)
     }
 
     fun btnQR(v: View){
@@ -416,56 +484,6 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         super.onStart()
         val currentUser = mAuth.currentUser
         updateUI(currentUser)
-
-        val connectionParams = ConnectionParams.Builder(CLIENT_ID)
-            .setRedirectUri(REDIRECT_URI)
-            .showAuthView(true)
-            .build()
-
-        SpotifyAppRemote.connect(this, connectionParams,
-            object : Connector.ConnectionListener {
-                override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
-                    mSpotifyAppRemote = spotifyAppRemote
-                    val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Conectado!", Snackbar.LENGTH_SHORT)
-                    mySnackbar.show()
-                    mSpotifyAppRemote!!.playerApi
-                        .subscribeToPlayerState()
-                        .setEventCallback { playerState: PlayerState ->
-                            val track: Track? = playerState.track
-                            if (track != null) {
-                                Log.d("MainActivity", track.name.toString() + " by " + track.artist.name)
-                            }
-                        }
-                    // Now you can start interacting with App Remote
-                    connected()
-                }
-
-                override fun onFailure(throwable: Throwable) {
-                    val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Fallo!", Snackbar.LENGTH_SHORT)
-                    mySnackbar.show()
-
-                    // Something went wrong when attempting to connect! Handle errors here
-                }
-            })
-
-    }
-
-    //Musica
-
-    private fun configurarRecyclerView() {
-        val admLayout = LinearLayoutManager(this)
-        val arrTarjetas = crearArrTarjetas()
-
-        val adaptador = Adaptador(arrTarjetas)
-        rvTarjetas.layoutManager = admLayout
-        rvTarjetas.adapter = adaptador
-    }
-
-    private fun crearArrTarjetas(): Array<Tarjeta> {
-        return arrayOf(
-            Tarjeta("Song", "Artist", R.drawable.bts, 0),
-            Tarjeta("Song", "Artist", R.drawable.bts, 0)
-        )
     }
 
     //Spotify
@@ -474,11 +492,14 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private var mSpotifyAppRemote: SpotifyAppRemote? = null
     //Hola
 
-
+    private fun play(cancion: String){
+        var track = "spotify:track:"+ cancion
+        mSpotifyAppRemote?.getPlayerApi()?.play(track)
+    }
 
     private fun connected() {
-        mSpotifyAppRemote?.getPlayerApi()?.play("spotify:track:5ejwTEOCsaDEjvhZTcU6lg");
-        //https://open.spotify.com/playlist/2NHIe8QezG9OfUV2ffhTwu?si=7RJrMrsDToStwtNiWQ4_dA
+        val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Conectado!", Snackbar.LENGTH_SHORT)
+        mySnackbar.show()
     }
 
     override fun onStop() {

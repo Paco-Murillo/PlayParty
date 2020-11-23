@@ -17,17 +17,24 @@ class Adaptador (private val arrDatos: Array<Tarjeta>) :
 
     override fun onBindViewHolder(holder: VistaRenglon, position: Int) {
         val tarjeta = arrDatos[position]
+        holder.vistaRenglon.buttonL.setOnClickListener {
+            println("Oprimiste el boton $position")
+        }
         holder.set(tarjeta)
     }
 
     override fun getItemCount(): Int {
         return arrDatos.size
     }
+    fun actualizarPuntos(){
+
+    }
 
     class VistaRenglon(val vistaRenglon: View) : RecyclerView.ViewHolder(vistaRenglon) {
         fun set(tarjeta: Tarjeta) {
             vistaRenglon.Cancion.text = tarjeta.cancion
             vistaRenglon.Artista.text = tarjeta.artista
+            vistaRenglon.Count.text = tarjeta.points.toString() + " Likes"
             vistaRenglon.imageAlbum.setImageResource(tarjeta.idImagen)
         }
     }
