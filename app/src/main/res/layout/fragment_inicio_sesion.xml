@@ -76,18 +76,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView8">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="20dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
                 android:layout_weight="1"
                 app:srcCompat="@android:drawable/ic_dialog_email" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -97,6 +100,7 @@
                 android:layout_weight="5"
                 android:background="#FFFFFF"
                 android:textColorHint="#000000">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etIniEmail"
                     android:layout_width="match_parent"
@@ -106,18 +110,21 @@
                     android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="20dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
                 android:layout_weight="1"
                 app:srcCompat="@android:drawable/ic_dialog_email" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -127,14 +134,16 @@
                 android:layout_weight="5"
                 android:background="#FFFFFF"
                 android:textColorHint="#000000">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etIniPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="Contraseña"
-                    android:inputType="textPassword" />
+                    android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

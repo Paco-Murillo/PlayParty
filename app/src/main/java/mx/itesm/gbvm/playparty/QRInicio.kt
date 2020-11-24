@@ -3,6 +3,7 @@ package mx.itesm.gbvm.playparty
 //Spoty
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
@@ -42,6 +43,7 @@ import kotlinx.android.synthetic.main.fragment_registro.*
 import kotlinx.android.synthetic.main.fragment_registro.etEmail
 import kotlinx.android.synthetic.main.fragment_registro.etPassword
 import kotlinx.android.synthetic.main.qr_inicio.*
+import kotlin.random.Random
 
 
 class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListener {
@@ -249,6 +251,12 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         Pablo = ""
         makeCurrentFragment(Registro_o_InicioDeSesion())
     }
+    /*
+    fun btnFragBackScanner(v: View){
+        Pablo = ""
+        makeCurrentFragment(FragmentoQR())
+    }
+     */
 
     //GPS
     private fun configurarGPS() {
@@ -352,25 +360,56 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         this.posicion = posicion
     }
 
-    //Google Autenticador
-
-
+    //Método de autenticación
     private fun updateUI(currentUser: FirebaseUser?) {
         if(currentUser!= null) {
+            val firebaseID = currentUser.uid
+
             println("LogIn exitoso")
             println("Usuario: ${currentUser?.email}")
+            //Actualizar con la sesión iniciada!!!!!!!!!!!!!!!!!!!!!!!!
+            //crearUsuarioBD()
+
         }else{
             println("No has hecho login")
+            Toast.makeText(this, "No ha iniciado Sesión", Toast.LENGTH_SHORT).show()
         }
-        //Actualizar con la sesión iniciada
+
     }
     fun btnRegistrarCuenta(v: View){
+        val usuario = etUsuario.text.toString()
         val email = etEmail.text.toString()
         val password = etPassword.text.toString()
-        if(email != "" && password != "") {
+        val nombreU = etNombreU.text.toString()
+        val fechaN = etFecha.text.toString()
+
+        if(email != "" && password != "" && usuario != "" && nombreU != "" && fechaN != "" ) {
             registrarCuenta(email, password)
         }
+        
     }
+    @SuppressLint("RestrictedApi")
+    fun crearUsuarioBD(){
+        //Leer la información que ingresa el usuario
+        val email = etEmail.text.toString()
+        val password = etPassword.text.toString()
+        val nombreU = etNombreU.text.toString()
+        val fechaN = etFecha.text.toString()
+        //Obtenemos la llave del usuario con la referencia del database
+        val referencia = database.getReference("/Usuarios").push()
+        val llave = referencia.key
+        println(llave)
+        //Creamos el objeto con los datos
+        val usuario = Usuario(userID = llave!!, email = email, password=password, nombreU=nombreU, fechaN=fechaN)
+        referencia.setValue(usuario)
+
+    }
+
+    private fun crearUniqueKey(): Int {
+        // Regresar entero
+        return Random(42).nextInt()
+    }
+
     fun registrarCuenta(email: String, password: String){
         mAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(
@@ -384,6 +423,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                         this@QRInicio, "Cuenta creada",
                         Toast.LENGTH_SHORT
                     ).show()
+                    crearUsuarioBD()
                     updateUI(user)
                     Pablo = "Perfil"
                     makeCurrentFragment(FragmentoPerfil())
@@ -400,8 +440,10 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
             }
     }
     fun btnIniciarSesion(v: View){
+        println("btnIniciarSesion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         val email = etIniEmail.text.toString()
         val password = etIniPassword.text.toString()
+
         if(email != "" && password != "") {
             iniciarSesion(email, password)
         }else if(email == ""){
@@ -420,7 +462,9 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
             .addOnCompleteListener(
                 this
             ) { task ->
+                println("iniciasesion*************************************")
                 if (task.isSuccessful) {
+                    println("Exitoso!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                     // Sign in success, update UI with the signed-in user's information
                     println("signInWithEmail:success")
                     Toast.makeText(
@@ -432,10 +476,11 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                     Pablo = "Perfil"
                     makeCurrentFragment(FragmentoPerfil())
                 } else {
+                    println("Incorrecto**************************************")
                     // If sign in fails, display a message to the user.
                     println("signInWithEmail:failure ${task.exception}")
                     Toast.makeText(
-                        this@QRInicio, "Authentication failed.",
+                        this@QRInicio, "Fallo de autenticación.",
                         Toast.LENGTH_SHORT
                     ).show()
                     //Podemos apagar botones o lanzar a una segunda actividad
@@ -446,6 +491,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     }
     fun btnCerrarSesion(v: View){
         mAuth.signOut()
+
         mGoogleSignInClient.signOut()
         println("logOut exitoso")
         Toast.makeText(
