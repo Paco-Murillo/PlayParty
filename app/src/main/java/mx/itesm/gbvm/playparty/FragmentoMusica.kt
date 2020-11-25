@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.fragment_qr.*
 
 class FragmentoMusica : Fragment() {
 
@@ -16,17 +15,11 @@ class FragmentoMusica : Fragment() {
     private val database = FirebaseDatabase.getInstance()
     private lateinit var referencia: DatabaseReference
 
-    var idse = ""
-    var Playlist = ""
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Playlist = arguments!!.getString("Playlist").toString()
-        idse = arguments!!.getString("ID").toString()
         val vista = inflater.inflate(R.layout.fragment_musica, container, false)
         rvTarjetas = vista.findViewById(R.id.rvTarjetas)
         configurarRecyclerView()
@@ -38,39 +31,38 @@ class FragmentoMusica : Fragment() {
         val arrTarjetas = crearArrTarjetas()
 
         val adaptador = Adaptador(arrTarjetas)
-        if(rvTarjetas != null) {
-            rvTarjetas.layoutManager = admLayout
-            rvTarjetas.adapter = adaptador
-        }
+        rvTarjetas.layoutManager = admLayout
+        rvTarjetas.adapter = adaptador
     }
 
     private fun crearArrTarjetas(): Array<Tarjeta> {
-        var arreglo = arrayOf<Tarjeta>()
-        /*
-        referencia = database.getReference("/" + idse)
+        var arreglo = arrayOf(
+            Tarjeta(4, "No Money", "Galantis", R.drawable.bts, 189126),
+            Tarjeta(3, "DJ Snake", "Middle", R.drawable.nm, 220573),
+            Tarjeta(0, "Cheap Thrills", "Sia", R.drawable.ct, 211666)
+        )
+        val miArreglo = ArrayList<Tarjeta>()
+        referencia = database.getReference("Establecimientos/MJQtwPWvTOlnMHj0VdF/Playlist")
         referencia.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
+                System.out.println("Hola")
                 var i = 0
                 for (registro in snapshot.children) {
+                    System.out.println(registro)
+                    i++
                     val tarjeta =
                         registro.getValue(mx.itesm.gbvm.playparty.Tarjeta::class.java)
                     if (tarjeta != null) {
-                        arreglo.set(i, tarjeta)
+                        arreglo.set(i,tarjeta)
+                        miArreglo.add(tarjeta)
                     }
-                    i = i + 1
-                    print(registro.toString())
                 }
             }
-        })*/
-        arreglo.set(0, Tarjeta(10, "Artista", "Cancion", 0, "HOla"))
-        arreglo.set(1, Tarjeta(13, "Artista", "Cancion", 0, "Hola"))
-        arreglo.set(2, Tarjeta(4, "Artista", "Cancion", 0, "Hola"))
-        println(arreglo.toString())
-        arreglo.sort()
-        println(arreglo.toString())
+        })
+        System.out.println(miArreglo.toString())
         return arreglo
     }
 

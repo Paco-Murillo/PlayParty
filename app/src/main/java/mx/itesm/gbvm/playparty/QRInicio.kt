@@ -138,8 +138,9 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         }
     }
 
-    private fun instanciarLista(string: String){
-        listaDatabase = database.getReference("https://playparty-a9dd9.firebaseio.com/Lists/active/${string}")
+    fun instanciarLista(v: View){
+        var track = "spotify:playlist:3KRKPBZ2P2YT90R1CTBEiL"
+        mSpotifyAppRemote?.getPlayerApi()?.play(track)
     }
 
     fun validarID(v: View){
@@ -204,34 +205,16 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
     fun btnPlaylistChange(v: View){
         playlist = IdPlaylist.text.toString()
-        var idPlay = ID.text.toString()
-        val url = " \thttps://api.spotify.com/v1/playlists/$playlist/tracks"
-
-        // Request a string response from the provided URL.
-        val stringRequest = StringRequest(
-            Request.Method.GET, url,
+        val url = " https://api.spotify.com/v1/playlists/$playlist/tracks"
+        val stringRequest = StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
                 // Display the first 500 characters of the response string.
-                val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Response is: ${response.toString()}", Snackbar.LENGTH_LONG)
+                val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "${response}", Snackbar.LENGTH_SHORT)
                 mySnackbar.show()
             },
-            Response.ErrorListener {
-                val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "ID Invalido", Snackbar.LENGTH_LONG)
-                mySnackbar.show()
-            })
-    }
-
-    fun btnAddSong(v: View){
-        val myRef = database.getReference(idMusica)
-        val puntos = 0
-        val nombre = "Cancion"
-        val artista = "Artista"
-        val idImagen = 0
-        val ID = "AQUIVAUNID"
-
-        val Tarjeta = Tarjeta(puntos,nombre,artista,idImagen,ID)
-
-        myRef.setValue(Tarjeta)
+            Response.ErrorListener { val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Playlist Error", Snackbar.LENGTH_SHORT)
+                mySnackbar.show()})
+        System.out.println(stringRequest)
     }
 
     fun btnQR(v: View){
