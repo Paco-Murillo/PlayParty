@@ -6,21 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.NonNull
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.ListFragment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.fragment_perfil.*
+import okhttp3.internal.cache.DiskLruCache
 
-class FragmentoPerfil(user: Usuario, buscar:Boolean) : ListFragment() {
+class FragmentoPerfil(user: Usuario, buscar:Boolean) : Fragment() {
     var usuario: Usuario = user
     val flagBuscar: Boolean = buscar
-
+    lateinit var textNombreU: TextView
+    lateinit var textPassword: TextView
+    lateinit var textEmail: TextView
+    lateinit var textFechaN: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
         super.onCreate(savedInstanceState)
+
         /*
         textfNombreU = view?.findViewById(R.id.tfNombreU) as TextView
         textfEmail = view?.findViewById(R.id.tfemail) as TextView
@@ -34,7 +39,13 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean) : ListFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val vista = super.onCreateView(inflater, container, savedInstanceState)
+        val vista = inflater.inflate(R.layout.fragment_perfil, container, false)
+
+        textNombreU = vista.findViewById<TextView>(R.id.tfNombreU)
+        textEmail = vista.findViewById<TextView>(R.id.tfemail)
+        textPassword = vista.findViewById<TextView>(R.id.tfpassword)
+        textFechaN = vista.findViewById<TextView>(R.id.tfFechaN)
+
         return  vista
     }
 
@@ -57,18 +68,18 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean) : ListFragment() {
             val referencia = baseDatos.getReference("/Usuarios/")
 
             referencia.addListenerForSingleValueEvent(object: ValueEventListener{
-                override fun onDataChange(snapshot: DataSnapshot) {
+                override fun onDataChange(@NonNull snapshot: DataSnapshot) {
 
                     for (registro in snapshot.children){
-                        println("Prueba con luismiiiiiiiiiiiiiiii")
-                        println(registro)
-                        println(registro.value.toString())
                         val usuarioBuscado = registro.getValue(Usuario::class.java)!!
-                        if(usuario.email   == usuarioBuscado.email){
-
-                            tfemail.setText(usuarioBuscado.email)
+                        if(snapshot.exists() ){
+                            if(usuario.email   == usuarioBuscado.email){
+                            usuario = usuarioBuscado
+                                println(usuario)
+                                mostrarUsuario()
                             break
-                        }
+                        }}
+
                         /*
                         if(usuario == usuarioActual){
                             //tfNombre.text = ${usuario.nom}
@@ -76,12 +87,14 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean) : ListFragment() {
                         //si el usuario es igual al current user lleno la información!!!!!!!!!!!!!!!!!!!!!!!!!
 
                          */
-
                     }
 
 
 
+
+
                 }
+
 
                 override fun onCancelled(error: DatabaseError) {
                     Toast.makeText(context,"No se pueden leer los datos del Usuario",
@@ -131,6 +144,10 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean) : ListFragment() {
     }
 
     private fun mostrarUsuario() {
+        textEmail.text = (usuario.email)
+            textNombreU.text = (usuario.nombreU)
+            textFechaN.text = (usuario.fechaN)
+            textPassword.text = (usuario.password)
 
         /*val adaptador = ArrayAdapter<String>(context!!,
                 android.R.layout.simple_list_item_1,arrUsuarios)

@@ -41,6 +41,7 @@ class FragmentoMusica : Fragment() {
             Tarjeta(3, "DJ Snake", "Middle", R.drawable.nm, 220573),
             Tarjeta(0, "Cheap Thrills", "Sia", R.drawable.ct, 211666)
         )
+
         val miArreglo = ArrayList<Tarjeta>()
         referencia = database.getReference("Establecimientos/MJQtwPWvTOlnMHj0VdF/Playlist")
         referencia.addValueEventListener(object : ValueEventListener {

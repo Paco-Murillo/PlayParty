@@ -12,6 +12,7 @@ import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -65,6 +66,8 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private lateinit var mAuth: FirebaseAuth
     private lateinit var listaDatabase: DatabaseReference
     private var usuarioActual: Usuario = Usuario("","","","","")
+    var email = ""
+    var password = ""
 
     //qr
     private val RC_BARCODE_CAPTURE = 6669
@@ -147,8 +150,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         mSpotifyAppRemote?.getPlayerApi()?.play(track)
     }
 
-    fun validarID(v: View){
-        idMusica = etSearch.text.toString()
+    fun valid(idMusica: String){
         referencia = database.getReference("/Establecimientos")
         referencia.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -163,10 +165,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                             makeCurrentFragment(FragmentoMusica())
                             BotonValido = true
                         }
-                        else{
-                            val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "ID Invalido!", Snackbar.LENGTH_LONG)
-                            mySnackbar.show()
-                        }
+
                     }
                     else{
                         val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "ID Invalido!", Snackbar.LENGTH_LONG)
@@ -175,6 +174,11 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                 }
             }
         })
+    }
+
+    fun validarID(v: View){
+        idMusica = etSearch.text.toString()
+        valid(idMusica)
     }
 
     fun btnIniciarSpotify(v: View){
@@ -423,8 +427,11 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     }
     fun btnIniciarSesion(v: View){
         println("btnIniciarSesion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        val email = etIniEmail.text.toString()
-        val password = etIniPassword.text.toString()
+         email = etIniEmail.text.toString()
+         password = etIniPassword.text.toString()
+        println(email)
+        println(password)
+
 
         if(email != "" && password != "") {
             iniciarSesion(email, password)
@@ -444,28 +451,19 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
             .addOnCompleteListener(
                 this
             ) { task ->
-                println("iniciasesion*************************************")
                 if (task.isSuccessful) {
-                    println("Exitoso!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                     // Sign in success, update UI with the signed-in user's information
                     println("signInWithEmail:success")
                     Toast.makeText(
                         this@QRInicio, "Sesión Iniciada",
                         Toast.LENGTH_SHORT
                     ).show()
-                    val user = mAuth.currentUser
-
+                    var user = mAuth.currentUser
                     updateUI(user)
                     Pablo = "Perfil"
-                    usuarioActual = Usuario(user.toString(), email, password, "a", "a")
+                    usuarioActual = Usuario(user.toString(), email, password, "", "")
                     makeCurrentFragment(FragmentoPerfil(usuarioActual,true))
-                    /*if(usuarioActual==null) {
-                        makeCurrentFragment(FragmentoPerfil(Usuario("", email, "", "", ""), true))
-                    }else{
-                        makeCurrentFragment(FragmentoPerfil(usuarioActual,false))
-                    }*/
                 } else {
-                    println("Incorrecto**************************************")
                     // If sign in fails, display a message to the user.
                     println("signInWithEmail:failure ${task.exception}")
                     Toast.makeText(
@@ -480,9 +478,19 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     }
     fun btnCerrarSesion(v: View){
         mAuth.signOut()
+        /*
+        if(etIniEmail.text.toString() == email){
+            etIniEmail.text?.clear()
+            etIniPassword.text?.clear()
+        }*/
 
+
+        println(etIniEmail.text.toString())
+        email = ""
+        password = ""
         mGoogleSignInClient.signOut()
         println("logOut exitoso")
+        Pablo = ""
         Toast.makeText(
             this@QRInicio, "Sesión Cerrada",
             Toast.LENGTH_SHORT
@@ -566,6 +574,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     }
 
     override fun onArticleSelected(string: String) {
-        mostrarDialogo(string)
+        println(string)
+        valid(string)
     }
 }

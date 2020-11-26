@@ -25,13 +25,15 @@ class Adaptador(private val arrDatos: Array<Tarjeta>) :
         val tarjeta = arrDatos[position]
         holder.vistaRenglon.buttonL.setOnClickListener {
             println("Oprimiste el boton $position")
-            holder.vistaRenglon.Count.text = (arrDatos[position].points + 1).toString() + "Likes"
-            if(arrDatos[position].points > arrDatos[position - 1].points){
-                var tar = arrDatos[position - 1].copy()
-                arrDatos[position - 1] = arrDatos[position]
-                arrDatos[position] = arrDatos[position - 1]
-
-
+            arrDatos[position].points++
+            holder.vistaRenglon.Count.text = (arrDatos[position].points).toString() + " Likes"
+            if(position != 0) {
+                if (arrDatos[position].points > arrDatos[position - 1].points) {
+                    var tar = arrDatos[position - 1].copy()
+                    arrDatos[position - 1] = arrDatos[position]
+                    arrDatos[position] = tar
+                    notifyDataSetChanged()
+                }
             }
         }
         holder.set(tarjeta)
