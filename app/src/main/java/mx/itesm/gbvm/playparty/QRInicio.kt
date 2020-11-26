@@ -46,7 +46,7 @@ import kotlinx.android.synthetic.main.qr_inicio.*
 import kotlin.random.Random
 
 
-class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListener {
+class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListener, FragmentoQR.OnHeadlineSelectedListener {
     private var gps: GPS? = null
     private val CODIGO_PERMISO_GPS: Int = 200
     private var posicion: Location? = null
@@ -64,6 +64,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mAuth: FirebaseAuth
     private lateinit var listaDatabase: DatabaseReference
+    private var usuarioActual: Usuario = Usuario("","","","","")
 
     //qr
     private val RC_BARCODE_CAPTURE = 6669
@@ -107,8 +108,11 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         val QRFragment = FragmentoQR()
         val fragInicio = FragmentoInicioSesion()
         val fragRegistro = FragmentoRegistro()
-        val fragPerfil = FragmentoPerfil()
+        //Aquí aun no hay usuario definido
+        val fragPerfil = FragmentoPerfil(usuarioActual, false)
 
+        //QR
+        QRFragment.setOnHeadlineSelectedListener(this)
         //Fragmento inicial
         makeCurrentFragment(QRFragment)
         val view: View = bottom_nav.findViewById(R.id.nav_Musica)
@@ -360,7 +364,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
     }
     fun btnRegistrarCuenta(v: View){
-        val usuario = etUsuario.text.toString()
+        val usuario = etNombreU.text.toString()
         val email = etEmail.text.toString()
         val password = etPassword.text.toString()
         val nombreU = etNombreU.text.toString()
@@ -383,14 +387,9 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         val llave = referencia.key
         println(llave)
         //Creamos el objeto con los datos
-        val usuario = Usuario(userID = llave!!, email = email, password=password, nombreU=nombreU, fechaN=fechaN)
-        referencia.setValue(usuario)
+        usuarioActual = Usuario(userID = llave!!, email = email, password=password, nombreU=nombreU, fechaN=fechaN)
+        referencia.setValue(usuarioActual)
 
-    }
-
-    private fun crearUniqueKey(): Int {
-        // Regresar entero
-        return Random(42).nextInt()
     }
 
     fun registrarCuenta(email: String, password: String){
@@ -409,7 +408,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                     crearUsuarioBD()
                     updateUI(user)
                     Pablo = "Perfil"
-                    makeCurrentFragment(FragmentoPerfil())
+                    makeCurrentFragment(FragmentoPerfil(usuarioActual,false))
                 } else {
                     // If sign in fails, display a message to the user.
                     println("createUserWithEmail:failure${task.exception}")
@@ -455,9 +454,16 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                         Toast.LENGTH_SHORT
                     ).show()
                     val user = mAuth.currentUser
+
                     updateUI(user)
                     Pablo = "Perfil"
-                    makeCurrentFragment(FragmentoPerfil())
+                    usuarioActual = Usuario(user.toString(), email, password, "a", "a")
+                    makeCurrentFragment(FragmentoPerfil(usuarioActual,true))
+                    /*if(usuarioActual==null) {
+                        makeCurrentFragment(FragmentoPerfil(Usuario("", email, "", "", ""), true))
+                    }else{
+                        makeCurrentFragment(FragmentoPerfil(usuarioActual,false))
+                    }*/
                 } else {
                     println("Incorrecto**************************************")
                     // If sign in fails, display a message to the user.
@@ -557,5 +563,9 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
     override fun onFailure(p0: Throwable?) {
 
+    }
+
+    override fun onArticleSelected(string: String) {
+        mostrarDialogo(string)
     }
 }
