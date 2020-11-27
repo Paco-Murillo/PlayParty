@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FragmentoPerfil2">
+    tools:context=".Fragmento_RI">
 
     <!-- TODO: Update blank fragment layout -->
     <LinearLayout
@@ -12,45 +12,31 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tfNombreU"
+            android:id="@+id/textView10"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="USUARIO" />
+            android:text="PlayParty"
+            android:textAlignment="center" />
 
         <TextView
-            android:id="@+id/tfemail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="EMAIL" />
-
-        <TextView
-            android:id="@+id/tfID"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="CONTRASEÑA" />
+            android:text="Escoge tu música favorita"
+            android:textAlignment="center" />
 
         <Button
-            android:id="@+id/btnSpotify"
+            android:id="@+id/btnSesion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#AA64E5"
-            android:text="CONECTAR SPOTIFY"
-            android:textColor="#FFFFFF" />
+            android:text="INICIO SESIÓN" />
 
         <Button
-            android:id="@+id/btnCancion"
+            android:id="@+id/btnReg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#AA64E5"
-            android:text="CANCIÓN"
-            android:textColor="#FFFFFF" />
-
-        <Button
-            android:id="@+id/btnCerrar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="CERRAR SESIÓN" />
-
+            android:text="REGISTRATE" />
     </LinearLayout>
 
 </FrameLayout>
