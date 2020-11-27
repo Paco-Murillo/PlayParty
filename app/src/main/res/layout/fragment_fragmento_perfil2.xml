@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,22 +13,38 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/textView12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PlayParty"
+            android:textAlignment="viewEnd" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher_foreground" />
+
+        <TextView
             android:id="@+id/tfNombreU"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="USUARIO" />
+            android:text="USUARIO"
+            android:textAlignment="center" />
 
         <TextView
             android:id="@+id/tfemail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="EMAIL" />
+            android:text="EMAIL"
+            android:textAlignment="center" />
 
         <TextView
             android:id="@+id/tfID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CONTRASEÑA" />
+            android:text="ID"
+            android:textAlignment="center" />
 
         <Button
             android:id="@+id/btnSpotify"
@@ -37,19 +54,45 @@
             android:text="CONECTAR SPOTIFY"
             android:textColor="#FFFFFF" />
 
-        <Button
-            android:id="@+id/btnCancion"
+        <EditText
+            android:id="@+id/editTextTextPersonName2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#AA64E5"
-            android:text="CANCIÓN"
-            android:textColor="#FFFFFF" />
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="ID" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnPlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="#AA64E5"
+                android:text="PLAYSONG"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/btnActuPlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#AA64E5"
+                android:text="ACTUALIZAR PLAYLIST"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/btnCerrar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CERRAR SESIÓN" />
+            android:background="#AA64E5"
+            android:text="CERRAR SESIÓN"
+            android:textColor="#FFFFFF" />
 
     </LinearLayout>
 
