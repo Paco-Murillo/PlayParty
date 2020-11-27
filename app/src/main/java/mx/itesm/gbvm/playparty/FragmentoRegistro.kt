@@ -16,7 +16,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
-class FragmentoRegistro : Fragment() {
+class FragmentoRegistro : Inicio_Registro() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

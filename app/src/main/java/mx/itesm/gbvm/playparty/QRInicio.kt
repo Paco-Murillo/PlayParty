@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
@@ -90,21 +91,26 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     //Aquí aun no hay usuario definido
     var buscar = false
     var encontrado = false
-    var fragPerfil = FragmentoPerfil(usuarioActual, buscar)
+    var fragPerfil = FragmentoPerfil(usuarioActual, buscar, fragRegistro)
     init {
         fragPerfil.setOnFragmentPerfilStoppedListener(this)
     }
+
+    private fun makeCurrentFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(fragment.toString())
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .commit()
+    }
+
     override fun onFragmentPerfilStopped(usuario: Usuario) {
         buscar = false
         encontrado = true
         usuarioActual = usuario
     }
 
-    private fun makeCurrentFragment(fragment: Fragment) =
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.fragment_container, fragment)
-            commit()
-        }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         configurarGPS()
@@ -368,7 +374,6 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     //Método de autenticación
     private fun updateUI(currentUser: FirebaseUser?) {
         if(currentUser!= null) {
-            val firebaseID = currentUser.uid
 
             println("LogIn exitoso")
             println("Usuario: ${currentUser?.email}")
@@ -426,7 +431,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                     crearUsuarioBD()
                     updateUI(user)
                     Pablo = "Perfil"
-                    fragPerfil = FragmentoPerfil(usuarioActual,buscar)
+                    fragPerfil = FragmentoPerfil(usuarioActual,buscar, fragRegistro)
                     fragPerfil.setOnFragmentPerfilStoppedListener(this)
                     makeCurrentFragment(fragPerfil)
                 } else {
@@ -478,7 +483,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                     updateUI(user)
                     Pablo = "Perfil"
                     usuarioActual = Usuario(user.toString(), email, password, "", "")
-                    fragPerfil = FragmentoPerfil(usuarioActual, !encontrado)
+                    fragPerfil = FragmentoPerfil(usuarioActual, !encontrado, fragInicio)
                     fragPerfil.setOnFragmentPerfilStoppedListener(this)
                     makeCurrentFragment(fragPerfil)
                 } else {
@@ -495,8 +500,10 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
             }
     }
     fun btnCerrarSesion(v: View){
-        var textViewErase = findViewById<TextView>(R.id.etIniEmail)
-        textViewErase.text = SpannableStringBuilder("")
+        //var textViewErase = findViewById<TextView>(R.id.etIniEmail)
+        //textViewErase.text = SpannableStringBuilder("")
+
+
 
         mAuth.signOut()
         /*
@@ -516,7 +523,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
             this@QRInicio, "Sesión Cerrada",
             Toast.LENGTH_SHORT
         ).show()
-        makeCurrentFragment(registroOIniciodesesion)
+        makeCurrentFragment(fragPerfil.fragmentoBack)
     }
     //Goggle methods
     private fun updateUIGoogle(account: GoogleSignInAccount?) {
@@ -561,8 +568,9 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
     override fun onStart() {
         super.onStart()
-        val currentUser = mAuth.currentUser
-        updateUI(currentUser)
+        println("--------------------------------------------------- onStartQRInicio ---------------------------------------------------")
+        //val currentUser = mAuth.currentUser
+        //updateUI(currentUser)
     }
 
     //Spotify

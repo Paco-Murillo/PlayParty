@@ -16,7 +16,8 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.fragment_perfil.*
 import okhttp3.internal.cache.DiskLruCache
 
-class FragmentoPerfil(user: Usuario, buscar:Boolean) : Fragment() {
+class FragmentoPerfil(user: Usuario, buscar:Boolean, fragmentoBack:Inicio_Registro) : Fragment() {
+    var fragmentoBack = fragmentoBack
     private lateinit var callback: OnNewArrayListener
     var usuario: Usuario = user
     val flagBuscar: Boolean = buscar

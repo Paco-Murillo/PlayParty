@@ -35,6 +35,7 @@ class FragmentoMusica(idMusica: String = "-MN6tS4qVNtOYELe3nrp") : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
         if(this::adaptador.isInitialized) {
             rvTarjetas.adapter = adaptador
         }

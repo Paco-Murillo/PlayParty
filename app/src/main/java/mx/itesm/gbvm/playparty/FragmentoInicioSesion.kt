@@ -26,12 +26,11 @@ import kotlinx.android.synthetic.main.qr_inicio.*
 import kotlin.math.sign
 
 
-class FragmentoInicioSesion() : Fragment() {
+class FragmentoInicioSesion : Inicio_Registro() {
     //var listener: ListenerGoogle? = null
 
     private val LOGIN_GOOGLE: Int = 500
     private lateinit var mGoogleSignInClient: GoogleSignInClient
-    private lateinit var mAuth: FirebaseAuth
     private lateinit var listaDatabase: DatabaseReference
     lateinit var mView: View
 
@@ -42,8 +41,6 @@ class FragmentoInicioSesion() : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_inicio_sesion, container, false)
-
-        mAuth = FirebaseAuth.getInstance()
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
