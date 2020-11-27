@@ -29,9 +29,7 @@ class FragmentoQR2 : Fragment() {
         if (requestCode == 6670){
             if(resultCode == Activity.RESULT_OK){
                 if (data != null) {
-                    println("---OnActivityResult---")
-                    println(data.data.toString())
-                    QRInicio.cambiarMusica(FragmentoMusica2.newInstance(QRInicio,data.data.toString()))
+                    valid(data.data.toString())
                 }
             }
         } else {
@@ -43,9 +41,7 @@ class FragmentoQR2 : Fragment() {
         super.onActivityCreated(savedInstanceState)
         btnQR.setOnClickListener {
             val scanQrIntent = Intent(QRInicio,Scanner::class.java)
-            println("----OnActivityCreated---")
-            var a = startActivityForResult(scanQrIntent, 6670)
-            println(a)
+            startActivityForResult(scanQrIntent, 6670)
         }
         btnBuscar.setOnClickListener {
             idMusica = etBuscarId.toString()

@@ -20,6 +20,7 @@ class Adaptador(var arrDatos: Array<Tarjeta>, var idMusica: String) : RecyclerVi
         return VistaRenglon(vista)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onBindViewHolder(holder: VistaRenglon, position: Int) {
         val tarjeta = arrDatos[position]
         holder.vistaRenglon.buttonL.setOnClickListener {
@@ -27,6 +28,8 @@ class Adaptador(var arrDatos: Array<Tarjeta>, var idMusica: String) : RecyclerVi
             actualizarBD(tarjeta)
             val string = arrDatos[position].points.toString() + " Likes"
             holder.vistaRenglon.Count.text = string
+            notifyDataSetChanged()
+            onArrayChanged()
         }
         holder.set(tarjeta)
     }
@@ -36,7 +39,6 @@ class Adaptador(var arrDatos: Array<Tarjeta>, var idMusica: String) : RecyclerVi
         referencia.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
             }
-
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach { registro ->
                     val thisTarjeta = registro.getValue(Tarjeta::class.java)!!
@@ -59,17 +61,13 @@ class Adaptador(var arrDatos: Array<Tarjeta>, var idMusica: String) : RecyclerVi
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    fun onArrayChanged(array: Array<Tarjeta>){
-        arrDatos = array
+    fun onArrayChanged(){
         ordenarArray()
         notifyDataSetChanged()
     }
 
     class VistaRenglon(val vistaRenglon: View) : RecyclerView.ViewHolder(vistaRenglon) {
         fun set(tarjeta: Tarjeta) {
-            val url = URL("http://image10.bizrate-images.com/resize?sq=60&uid=2216744464")
-            val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-            vistaRenglon.imageAlbum.setImageBitmap(bmp)
             vistaRenglon.Cancion.text = tarjeta.cancion
             vistaRenglon.Artista.text = tarjeta.artista
             val string = tarjeta.points.toString() + " Likes"

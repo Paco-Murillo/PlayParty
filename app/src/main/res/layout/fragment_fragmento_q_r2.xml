@@ -48,12 +48,6 @@
                 android:layout_height="wrap_content"
                 android:textColorHint="#FFFFFF">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etBuscarId"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="BUSCAR"
-                    android:textColor="#FFFFFF" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
@@ -63,6 +57,13 @@
             android:layout_height="wrap_content"
             android:background="#AA64E5"
             android:text="BUSCAR"
+            android:textColor="#FFFFFF" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etBuscarId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="BUSCAR"
             android:textColor="#FFFFFF" />
     </LinearLayout>
 
