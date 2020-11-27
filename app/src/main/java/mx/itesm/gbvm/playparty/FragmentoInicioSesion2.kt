@@ -1,6 +1,5 @@
 package mx.itesm.gbvm.playparty
 
-import android.app.Activity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.NonNull
-import androidx.fragment.app.FragmentTransaction
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -16,7 +14,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.fragment_fragmento_inicio_sesion2.*
 import kotlinx.android.synthetic.main.fragment_inicio_sesion.etIniEmail
-import kotlinx.android.synthetic.main.fragment_inicio_sesion.etIniPassword
+import kotlinx.android.synthetic.main.fragment_inicio_sesion.etNombreU
 
 
 class FragmentoInicioSesion2 : Fragment() {
@@ -32,7 +30,7 @@ class FragmentoInicioSesion2 : Fragment() {
 
     fun btnIniciarSesion(){
         val email = etIniEmail.text.toString()
-        val password = etIniPassword.text.toString()
+        val password = etNombreU.text.toString()
 
         println("Hola")
         if(email != "" && password != "") {
@@ -107,7 +105,7 @@ class FragmentoInicioSesion2 : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        btnIS.setOnClickListener {
+        btnRegistrarse.setOnClickListener {
             btnIniciarSesion()
         }
     }

@@ -81,7 +81,7 @@
                 android:background="#FFFFFF">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etIniPassword"
+                    android:id="@+id/etNombreU"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Contraseña" />
@@ -89,7 +89,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/btnIS"
+            android:id="@+id/btnRegistrarse"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#AA64E5"
