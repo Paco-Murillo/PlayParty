@@ -12,15 +12,7 @@ import kotlinx.android.synthetic.main.renglon_musica.view.*
 import java.net.URL
 
 
-class Adaptador(
-    var arrDatos: Array<Tarjeta>,
-    fragmentoMusica: FragmentoMusica,
-    var idMusica: String
-) :
-    RecyclerView.Adapter<Adaptador.VistaRenglon>(), FragmentoMusica.OnNewArrayListener {
-    init {
-        fragmentoMusica.setOnNewArrayListener(this)
-    }
+class Adaptador(var arrDatos: Array<Tarjeta>, var idMusica: String) : RecyclerView.Adapter<Adaptador.VistaRenglon>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VistaRenglon {
         val vista = LayoutInflater.from(parent.context)
@@ -38,6 +30,7 @@ class Adaptador(
         }
         holder.set(tarjeta)
     }
+
     fun actualizarBD(tarjeta: Tarjeta){
         var referencia = FirebaseDatabase.getInstance().getReference("/Usuarios/$idMusica/Playlist")
         referencia.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -48,7 +41,8 @@ class Adaptador(
                 snapshot.children.forEach { registro ->
                     val thisTarjeta = registro.getValue(Tarjeta::class.java)!!
                     if (tarjeta.idSong == thisTarjeta.idSong) {
-                        actualizarBDKey(tarjeta, registro.key!!)
+                        var referencia = FirebaseDatabase.getInstance().getReference("/Usuarios/$idMusica/Playlist/${registro.key!!}/points")
+                        referencia.setValue(tarjeta.points)
                     }
                 }
             }
@@ -60,24 +54,12 @@ class Adaptador(
         arrDatos.sortWith(Tarjeta.Comparator().reversed())
     }
 
-    fun actualizarBDKey(tarjeta: Tarjeta, string: String){
-        var referencia = FirebaseDatabase.getInstance().getReference("/Usuarios/$idMusica/Playlist/$string/points")
-        referencia.setValue(tarjeta.points) { error: DatabaseError?, _: DatabaseReference ->
-            if (error == null) {
-                println("Points Updated")
-            }
-        }
-    }
-
     override fun getItemCount(): Int {
         return arrDatos.size
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    override fun onArrayChanged(array: Array<Tarjeta>){
-        for (i in arrDatos.indices){
-            println(arrDatos[i])
-        }
+    fun onArrayChanged(array: Array<Tarjeta>){
         arrDatos = array
         ordenarArray()
         notifyDataSetChanged()

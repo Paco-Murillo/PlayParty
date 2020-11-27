@@ -60,7 +60,6 @@ class FragmentoInicioSesion2 : Fragment() {
                         QRInicio, "Sesión Iniciada",
                         Toast.LENGTH_SHORT
                     ).show()
-                    var user = mAuth.currentUser
                     val baseDatos = FirebaseDatabase.getInstance()
                     val referencia = baseDatos.getReference("/Usuarios/")
 

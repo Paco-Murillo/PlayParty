@@ -1,31 +1,24 @@
 package mx.itesm.gbvm.playparty
 
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.synthetic.main.fragment_fragmento_registro2.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [Fragmento_registro2.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Fragmento_registro2 : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    lateinit var QRInicio: QRInicio
+    lateinit var mAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
         }
     }
 
@@ -33,26 +26,77 @@ class Fragmento_registro2 : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+        mAuth = FirebaseAuth.getInstance()
         return inflater.inflate(R.layout.fragment_fragmento_registro2, container, false)
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        btnRegistrarse.setOnClickListener {
+            val usuario = etNombreU.text.toString()
+            val email = etEmail.text.toString()
+            val password = etIniEmail.text.toString()
+            val latitud = etLatitud.text.toString()
+            val longitud = etLongitud.text.toString()
+            val playlist = etPlayList.text.toString()
+            if(email != "" && password != "" && usuario != "" && latitud != "" && longitud != "" && playlist != "") {
+                registrarCuenta(email, password)
+            }
+            else
+            {
+                Toast.makeText(
+                    context, "llene todos los campos",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun registrarCuenta(email: String, password: String) {
+        mAuth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(
+                QRInicio
+            ) { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(
+                        QRInicio, "Cuenta creada",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    val usuario = etNombreU.text.toString()
+                    val latitud = etLatitud.text.toString()
+                    val longitud = etLongitud.text.toString()
+                    val playlist = etPlayList.text.toString()
+
+                    val baseDatos = FirebaseDatabase.getInstance()
+                    val referencia = baseDatos.getReference("/Usuarios").push()
+                    val llave = referencia.key
+                    if(llave != null) {
+                        val user =Usuario(llave, email, password, usuario, latitud, longitud, playlist)
+                        referencia.setValue(user)
+                        QRInicio.cambiarPerfil(FragmentoPerfil2.newInstance(user, mAuth, QRInicio))
+                    }
+                    else{
+                        Toast.makeText(
+                            QRInicio, "Error al crear la Base de datos.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                } else {
+                    Toast.makeText(
+                        QRInicio, "Authentication failed.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+    }
+
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Fragmento_registro2.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(qrInicio: QRInicio) =
             Fragmento_registro2().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    QRInicio = qrInicio
                 }
             }
     }

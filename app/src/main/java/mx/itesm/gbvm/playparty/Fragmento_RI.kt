@@ -31,7 +31,7 @@ class Fragmento_RI : Fragment() {
             QRInicio.cambiarPerfil(FragmentoInicioSesion2.newInstance(QRInicio))
         }
         btnReg.setOnClickListener {
-            QRInicio.cambiarPerfil(FragmentoRegistro())
+            QRInicio.cambiarPerfil(Fragmento_registro2.newInstance(QRInicio))
         }
     }
     companion object {
