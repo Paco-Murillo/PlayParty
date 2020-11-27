@@ -50,7 +50,7 @@ class FragmentoInicioSesion() : Fragment() {
             .build()
 
         mGoogleSignInClient = GoogleSignIn.getClient(AppPlayParty.context, gso);
-        val account = GoogleSignIn.getLastSignedInAccount(AppPlayParty.context)
+        //val account = GoogleSignIn.getLastSignedInAccount(AppPlayParty.context)
         //updateUIGoogle(account)
         mView.sign_in_button.setOnClickListener {
             val intGoogle = mGoogleSignInClient.signInIntent

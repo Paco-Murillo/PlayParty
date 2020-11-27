@@ -6,16 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.ListFragment
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import kotlinx.android.synthetic.main.fragment_qr.view.*
 
-class FragmentoQR : Fragment() {
+class FragmentoQR(qrInicio: QRInicio) : Fragment() {
 
-    private val SCAN_QR = QRInicio().SCAN_QR
-    internal lateinit var callback: OnHeadlineSelectedListener
+    private val SCAN_QR = qrInicio.SCAN_QR
+    private lateinit var callback: OnHeadlineSelectedListener
 
     override fun onCreateView(
         inflater: LayoutInflater,

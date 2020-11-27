@@ -29,7 +29,7 @@ class FragmentoMapa : Fragment(){
     @SuppressLint("MissingPermission")
     private val callback = OnMapReadyCallback { googleMap ->
         googleMap.isMyLocationEnabled = true
-        referencia = database.getReference("/Establecimientos")
+        referencia = database.getReference("/Usuarios")
         referencia.addValueEventListener(object: ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
 
@@ -40,8 +40,8 @@ class FragmentoMapa : Fragment(){
                     //leer coordenadas de gps (combinar practica de gps)
                     val establecimiento = registro.getValue(mx.itesm.gbvm.playparty.Establecimiento::class.java)
                     if (establecimiento != null) {
-                        val nombre = establecimiento.nombre
-                        val latLng = LatLng(establecimiento.latitud, establecimiento.longitud)
+                        val nombre = establecimiento.nombreU
+                        val latLng = LatLng(establecimiento.latitud.toDouble(), establecimiento.longitud.toDouble())
                         googleMap.addMarker(MarkerOptions().position(latLng).title(nombre))
                         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
                         val camara = CameraPosition.Builder().target(latLng).zoom(18f).build()

@@ -15,6 +15,7 @@ import android.provider.Settings
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -22,7 +23,6 @@ import androidx.fragment.app.Fragment
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -30,6 +30,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -43,11 +44,11 @@ import kotlinx.android.synthetic.main.fragment_qr.*
 import kotlinx.android.synthetic.main.fragment_registro.*
 import kotlinx.android.synthetic.main.fragment_registro.etEmail
 import kotlinx.android.synthetic.main.fragment_registro.etPassword
+import kotlinx.android.synthetic.main.fragment_registro_inicio_sesion.*
 import kotlinx.android.synthetic.main.qr_inicio.*
-import kotlin.random.Random
 
 
-class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListener, FragmentoQR.OnHeadlineSelectedListener {
+class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListener, FragmentoQR.OnHeadlineSelectedListener, FragmentoPerfil.OnNewArrayListener {
     private var gps: GPS? = null
     private val CODIGO_PERMISO_GPS: Int = 200
     private var posicion: Location? = null
@@ -78,6 +79,26 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private var playlist = "2NHIe8QezG9OfUV2ffhTwu"
     //Agregue funcionalidad al btnInicioSesión
 
+    // Fragments
+
+    var musicaFragment = FragmentoMusica(idMusica)
+    val mapaFragment = FragmentoMapa()
+    val registroOIniciodesesion = Registro_o_InicioDeSesion()
+    val QRFragment = FragmentoQR(this)
+    val fragInicio = FragmentoInicioSesion()
+    val fragRegistro = FragmentoRegistro()
+    //Aquí aun no hay usuario definido
+    var buscar = false
+    var encontrado = false
+    var fragPerfil = FragmentoPerfil(usuarioActual, buscar)
+    init {
+        fragPerfil.setOnFragmentPerfilStoppedListener(this)
+    }
+    override fun onFragmentPerfilStopped(usuario: Usuario) {
+        buscar = false
+        encontrado = true
+        usuarioActual = usuario
+    }
 
     private fun makeCurrentFragment(fragment: Fragment) =
         supportFragmentManager.beginTransaction().apply {
@@ -105,14 +126,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         updateUIGoogle(account)
 
 
-        val musicaFragment = FragmentoMusica()
-        val mapaFragment = FragmentoMapa()
-        val registroOIniciodesesion = Registro_o_InicioDeSesion()
-        val QRFragment = FragmentoQR()
-        val fragInicio = FragmentoInicioSesion()
-        val fragRegistro = FragmentoRegistro()
-        //Aquí aun no hay usuario definido
-        val fragPerfil = FragmentoPerfil(usuarioActual, false)
+
 
         //QR
         QRFragment.setOnHeadlineSelectedListener(this)
@@ -151,18 +165,18 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     }
 
     fun valid(idMusica: String){
-        referencia = database.getReference("/Establecimientos")
+        referencia = database.getReference("/Usuarios")
         referencia.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
             }
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (registro in snapshot.children) {
                     val establecimiento =
-                        registro.getValue(mx.itesm.gbvm.playparty.Establecimiento::class.java)
+                        registro.getValue(Establecimiento::class.java)
                     if (establecimiento != null) {
-                        val id = establecimiento.ID
+                        val id = establecimiento.userID
                         if (id == idMusica) {
-                            makeCurrentFragment(FragmentoMusica())
+                            makeCurrentFragment(musicaFragment)
                             BotonValido = true
                         }
 
@@ -227,20 +241,20 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
     fun btnQR(v: View){
         BotonValido = false
-        makeCurrentFragment(FragmentoQR())
+        makeCurrentFragment(QRFragment)
     }
 
     fun btnFragInicioSesion(v: View){
         Pablo = "Inicio"
-        makeCurrentFragment(FragmentoInicioSesion())
+        makeCurrentFragment(fragInicio)
     }
     fun btnFragRegistro(v: View){
         Pablo = "Registro"
-        makeCurrentFragment(FragmentoRegistro())
+        makeCurrentFragment(fragRegistro)
     }
     fun btnFragBackIniReg(v: View){
         Pablo = ""
-        makeCurrentFragment(Registro_o_InicioDeSesion())
+        makeCurrentFragment(fragPerfil)
     }
     /*
     fun btnFragBackScanner(v: View){
@@ -412,7 +426,9 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                     crearUsuarioBD()
                     updateUI(user)
                     Pablo = "Perfil"
-                    makeCurrentFragment(FragmentoPerfil(usuarioActual,false))
+                    fragPerfil = FragmentoPerfil(usuarioActual,buscar)
+                    fragPerfil.setOnFragmentPerfilStoppedListener(this)
+                    makeCurrentFragment(fragPerfil)
                 } else {
                     // If sign in fails, display a message to the user.
                     println("createUserWithEmail:failure${task.exception}")
@@ -462,7 +478,9 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                     updateUI(user)
                     Pablo = "Perfil"
                     usuarioActual = Usuario(user.toString(), email, password, "", "")
-                    makeCurrentFragment(FragmentoPerfil(usuarioActual,true))
+                    fragPerfil = FragmentoPerfil(usuarioActual, !encontrado)
+                    fragPerfil.setOnFragmentPerfilStoppedListener(this)
+                    makeCurrentFragment(fragPerfil)
                 } else {
                     // If sign in fails, display a message to the user.
                     println("signInWithEmail:failure ${task.exception}")
@@ -477,6 +495,9 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
             }
     }
     fun btnCerrarSesion(v: View){
+        var textViewErase = findViewById<TextView>(R.id.etIniEmail)
+        textViewErase.text = SpannableStringBuilder("")
+
         mAuth.signOut()
         /*
         if(etIniEmail.text.toString() == email){
@@ -485,7 +506,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         }*/
 
 
-        println(etIniEmail.text.toString())
+        //println(etIniEmail.text.toString())
         email = ""
         password = ""
         mGoogleSignInClient.signOut()
@@ -495,7 +516,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
             this@QRInicio, "Sesión Cerrada",
             Toast.LENGTH_SHORT
         ).show()
-        makeCurrentFragment(Registro_o_InicioDeSesion())
+        makeCurrentFragment(registroOIniciodesesion)
     }
     //Goggle methods
     private fun updateUIGoogle(account: GoogleSignInAccount?) {

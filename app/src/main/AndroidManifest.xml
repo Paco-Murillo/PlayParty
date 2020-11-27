@@ -30,7 +30,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBBB0Aq--ibIKQp83UxYKUXakze6gdPfLk" />
+            android:value="AIzaSyCeb2EIMg48T8I8EHcn1JtMjpBiVYrs5qQ" />
 
         <activity android:name=".QRInicio">
             <intent-filter>

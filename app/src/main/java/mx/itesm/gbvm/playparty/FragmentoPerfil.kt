@@ -17,15 +17,18 @@ import kotlinx.android.synthetic.main.fragment_perfil.*
 import okhttp3.internal.cache.DiskLruCache
 
 class FragmentoPerfil(user: Usuario, buscar:Boolean) : Fragment() {
+    private lateinit var callback: OnNewArrayListener
     var usuario: Usuario = user
     val flagBuscar: Boolean = buscar
+    var flagEncontrado = false
     lateinit var textNombreU: TextView
     lateinit var textPassword: TextView
     lateinit var textEmail: TextView
     lateinit var textFechaN: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        println(" --------------------------------------------------- onCreate ---------------------------------------------------")
         /*
         textfNombreU = view?.findViewById(R.id.tfNombreU) as TextView
         textfEmail = view?.findViewById(R.id.tfemail) as TextView
@@ -55,6 +58,13 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean) : Fragment() {
         leerDatosUsuario()
 
         println(usuario.nombreU)
+        println("OnStart")
+        println(flagEncontrado)
+        if (flagEncontrado) {
+            println("Mostrar Usuario")
+            println(usuario)
+            mostrarUsuario()
+        }
     /*
         if (usuario!=null) {
             mostrarUsuario()
@@ -62,6 +72,18 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean) : Fragment() {
 
      */
     }
+
+    override fun onResume() {
+        super.onResume()
+        println("onResume")
+        println(flagEncontrado)
+        if (flagEncontrado) {
+            println("Mostrar Usuario")
+            println(usuario)
+            mostrarUsuario()
+        }
+    }
+
     private fun leerDatosUsuario(){
         if (flagBuscar){
             val baseDatos = FirebaseDatabase.getInstance()
@@ -74,11 +96,16 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean) : Fragment() {
                         val usuarioBuscado = registro.getValue(Usuario::class.java)!!
                         if(snapshot.exists() ){
                             if(usuario.email   == usuarioBuscado.email){
-                            usuario = usuarioBuscado
+                                println("Encontrado ---------------------------------------------------")
+                                flagEncontrado = true
+                                println(flagEncontrado)
+                                usuario = usuarioBuscado
                                 println(usuario)
                                 mostrarUsuario()
-                            break
-                        }}
+                                println("Encontrado ---------------------------------------------------")
+                                break
+                            }
+                        }
 
                         /*
                         if(usuario == usuarioActual){
@@ -153,6 +180,19 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean) : Fragment() {
                 android.R.layout.simple_list_item_1,arrUsuarios)
                 listAdapter = adaptador*/
 
+    }
+
+    override fun onStop() {
+        super.onStop()
+        callback.onFragmentPerfilStopped(usuario)
+    }
+
+    fun setOnFragmentPerfilStoppedListener(callback: OnNewArrayListener){
+        this.callback = callback
+    }
+
+    interface OnNewArrayListener{
+        fun onFragmentPerfilStopped(usuario: Usuario)
     }
 
 }
