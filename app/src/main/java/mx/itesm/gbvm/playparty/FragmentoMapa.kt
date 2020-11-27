@@ -17,11 +17,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.database.*
 
-class FragmentoMapa : Fragment(){
-
-    private var gps: GPS? = null
-    private val CODIGO_PERMISO_GPS: Int = 200
-    private var posicion: Location? = null
+class FragmentoMapa(posicion: Location?) : Fragment(){
 
     private  val database = FirebaseDatabase.getInstance()
     private lateinit var referencia: DatabaseReference
@@ -43,9 +39,20 @@ class FragmentoMapa : Fragment(){
                         val nombre = establecimiento.nombreU
                         val latLng = LatLng(establecimiento.latitud.toDouble(), establecimiento.longitud.toDouble())
                         googleMap.addMarker(MarkerOptions().position(latLng).title(nombre))
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
-                        val camara = CameraPosition.Builder().target(latLng).zoom(18f).build()
-                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camara))
+                        if (posicion != null) {
+                            googleMap.moveCamera(
+                                CameraUpdateFactory.newLatLng(
+                                    LatLng(
+                                        posicion.latitude,
+                                        posicion.longitude
+                                    )
+                                )
+                            )
+                            val camara = CameraPosition.Builder()
+                                .target(LatLng(posicion.latitude, posicion.longitude)).zoom(18f)
+                                .build()
+                            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camara))
+                        }
                     }
                 }
             }

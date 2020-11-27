@@ -1,8 +1,10 @@
 package mx.itesm.gbvm.playparty
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.renglon_musica.view.*
@@ -32,14 +34,6 @@ class Adaptador(
             actualizarBD(tarjeta)
             val string = arrDatos[position].points.toString() + " Likes"
             holder.vistaRenglon.Count.text = string
-            if(position != 0) {
-                if (arrDatos[position].points > arrDatos[position - 1].points) {
-                    var tar = arrDatos[position - 1].copy()
-                    arrDatos[position - 1] = arrDatos[position]
-                    arrDatos[position] = tar
-                    notifyDataSetChanged()
-                }
-            }
         }
         holder.set(tarjeta)
     }
@@ -60,6 +54,7 @@ class Adaptador(
         })
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     fun ordenarArray(){
         arrDatos.sortWith(Tarjeta.Comparator().reversed())
     }
@@ -80,6 +75,7 @@ class Adaptador(
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onArrayChanged(array: Array<Tarjeta>){
         for (i in arrDatos.indices){
             println(arrDatos[i])

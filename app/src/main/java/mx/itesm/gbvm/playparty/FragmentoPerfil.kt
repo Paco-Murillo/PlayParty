@@ -25,16 +25,10 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean, fragmentoBack:Inicio_Regist
     lateinit var textNombreU: TextView
     lateinit var textPassword: TextView
     lateinit var textEmail: TextView
-    lateinit var textFechaN: TextView
+    lateinit var txSpotify: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*
-        textfNombreU = view?.findViewById(R.id.tfNombreU) as TextView
-        textfEmail = view?.findViewById(R.id.tfemail) as TextView
-        textfPassword = view?.findViewById(R.id.tfpassword) as TextView
-        textfFechaN = view?.findViewById(R.id.tfFechaN) as TextView
-         */
 
     }
     override fun onCreateView(
@@ -47,7 +41,7 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean, fragmentoBack:Inicio_Regist
         textNombreU = vista.findViewById<TextView>(R.id.tfNombreU)
         textEmail = vista.findViewById<TextView>(R.id.tfemail)
         textPassword = vista.findViewById<TextView>(R.id.tfpassword)
-        textFechaN = vista.findViewById<TextView>(R.id.tfFechaN)
+        txSpotify = vista.findViewById(R.id.txSpotify)
 
         return  vista
     }
@@ -62,12 +56,6 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean, fragmentoBack:Inicio_Regist
         println("onstart")
         println(flagEncontrado)
         println(usuario)
-    /*
-        if (usuario!=null) {
-            mostrarUsuario()
-        }
-
-     */
     }
 
     override fun onResume() {
@@ -102,22 +90,8 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean, fragmentoBack:Inicio_Regist
                                 break
                             }
                         }
-
-                        /*
-                        if(usuario == usuarioActual){
-                            //tfNombre.text = ${usuario.nom}
-                        }
-                        //si el usuario es igual al current user lleno la información!!!!!!!!!!!!!!!!!!!!!!!!!
-
-                         */
                     }
-
-
-
-
-
                 }
-
 
                 override fun onCancelled(error: DatabaseError) {
                     Toast.makeText(context,"No se pueden leer los datos del Usuario",
@@ -126,57 +100,14 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean, fragmentoBack:Inicio_Regist
 
             })
         }
-
-
-        /*
-        val baseDatos = FirebaseDatabase.getInstance()
-        val referencia = baseDatos.getReference("/Usuarios/")
-        //val usuarioActual = FirebaseAuth.getInstance().toString()
-        //val currentUser = FirebaseUser?
-
-        referencia.addListenerForSingleValueEvent(object: ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-
-                for (registro in snapshot.children){
-                    println(registro)
-                    println(registro.value.toString())
-                    val usuario = registro.getValue(Usuario::class.java)
-                    if(usuario.nombreU == )
-                    /*
-                    if(usuario == usuarioActual){
-                        //tfNombre.text = ${usuario.nom}
-                    }
-                    //si el usuario es igual al current user lleno la información!!!!!!!!!!!!!!!!!!!!!!!!!
-
-                     */
-
-                }
-
-
-
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(context,"No se pueden leer los datos del Usuario",
-                Toast.LENGTH_SHORT).show()
-            }
-
-        })
-
-         */
     }
 
     private fun mostrarUsuario() {
         println("Mostrar usuario")
         textEmail.text = (usuario.email)
-            textNombreU.text = (usuario.nombreU)
-            textFechaN.text = (usuario.fechaN)
-            textPassword.text = (usuario.password)
-
-        /*val adaptador = ArrayAdapter<String>(context!!,
-                android.R.layout.simple_list_item_1,arrUsuarios)
-                listAdapter = adaptador*/
-
+        textNombreU.text = (usuario.nombreU)
+        textPassword.text = (usuario.password)
+        txSpotify.text = (usuario.playlist)
     }
 
     override fun onStop() {

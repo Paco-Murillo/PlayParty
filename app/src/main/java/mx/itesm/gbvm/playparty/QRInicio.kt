@@ -13,20 +13,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.provider.Settings
-import android.view.LayoutInflater
-import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -34,7 +27,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -50,8 +42,6 @@ import kotlinx.android.synthetic.main.fragment_registro.etEmail
 import kotlinx.android.synthetic.main.fragment_registro.etPassword
 import kotlinx.android.synthetic.main.fragment_registro_inicio_sesion.*
 import kotlinx.android.synthetic.main.qr_inicio.*
-import java.lang.reflect.Array.newInstance
-import javax.xml.datatype.DatatypeFactory.newInstance
 
 
 class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListener, FragmentoQR.OnHeadlineSelectedListener, FragmentoPerfil.OnNewArrayListener {
@@ -59,8 +49,13 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private val CODIGO_PERMISO_GPS: Int = 200
     private var posicion: Location? = null
 
+    //Spotify
+    private val CLIENT_ID: String? = "571410421d934710ba3a3f201b170b50"
+    private val REDIRECT_URI = "https://mx.itesm.gbvm.playparty/callback"
+    private var mSpotifyAppRemote: SpotifyAppRemote? = null
+
     // Validacion ID
-    var idMusica:String = "------------------------------ h -------------------------------"
+    var idMusica:String = ""
     var BotonValido: Boolean = false
     private  val database = FirebaseDatabase.getInstance()
     private lateinit var referencia: DatabaseReference
@@ -68,22 +63,14 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
 
     //Google Autenticador
-    private val LOGIN_GOOGLE: Int = 500
-    private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mAuth: FirebaseAuth
-    private lateinit var listaDatabase: DatabaseReference
-    private var usuarioActual: Usuario = Usuario("","","","","")
+    private var usuarioActual: Usuario = Usuario()
     var email = ""
     var password = ""
 
     //qr
     private val RC_BARCODE_CAPTURE = 6669
     val SCAN_QR = 6670
-
-    //Musica
-    private var idPersona = "EsteEsUnID"
-    private var playlist = "2NHIe8QezG9OfUV2ffhTwu"
-    //Agregue funcionalidad al btnInicioSesión
 
     // Fragments
     var fragInicio = FragmentoInicioSesion.newInstance()
@@ -110,26 +97,12 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         usuarioActual = usuario
     }
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         configurarGPS()
-        val args = Bundle()
-        args.putString("playlist", playlist)
-        args.putString("ID", idMusica)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.qr_inicio)
 
         mAuth = FirebaseAuth.getInstance()
-
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build()
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        val account  = GoogleSignIn.getLastSignedInAccount(this)
-        updateUIGoogle(account)
 
 
         var QRFragment = FragmentoQR(this)
@@ -159,7 +132,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                     } else {
                         makeCurrentFragment(QRFragment)
                     }
-                R.id.nav_Mapa -> makeCurrentFragment(FragmentoMapa())
+                R.id.nav_Mapa -> makeCurrentFragment(FragmentoMapa(posicion))
             }
             true
         }
@@ -226,44 +199,25 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                 }
             })
     }
+    fun btnFragInicioSesion(v: View){
+        Pablo = "Inicio"
+        makeCurrentFragment(fragInicio)
+    }
 
-    fun btnPlaylistChange(v: View){
-        playlist = IdPlaylist.text.toString()
-        val url = " https://api.spotify.com/v1/playlists/$playlist/tracks"
-        val stringRequest = StringRequest(Request.Method.GET, url,
-            Response.Listener<String> { response ->
-                // Display the first 500 characters of the response string.
-                val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "${response}", Snackbar.LENGTH_SHORT)
-                mySnackbar.show()
-            },
-            Response.ErrorListener { val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Playlist Error", Snackbar.LENGTH_SHORT)
-                mySnackbar.show()})
-        System.out.println(stringRequest)
+    fun btnFragRegistro(v: View){
+        Pablo = "Registro"
+        makeCurrentFragment(fragRegistro)
+    }
+
+    fun btnFragBackIniReg(v: View){
+        Pablo = ""
+        makeCurrentFragment(Registro_o_InicioDeSesion())
     }
 
     fun btnQR(v: View){
         BotonValido = false
         makeCurrentFragment(FragmentoQR(this))
     }
-
-    fun btnFragInicioSesion(v: View){
-        Pablo = "Inicio"
-        makeCurrentFragment(fragInicio)
-    }
-    fun btnFragRegistro(v: View){
-        Pablo = "Registro"
-        makeCurrentFragment(fragRegistro)
-    }
-    fun btnFragBackIniReg(v: View){
-        Pablo = ""
-        makeCurrentFragment(fragPerfil)
-    }
-    /*
-    fun btnFragBackScanner(v: View){
-        Pablo = ""
-        makeCurrentFragment(FragmentoQR())
-    }
-     */
 
     //GPS
     private fun configurarGPS() {
@@ -373,8 +327,6 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
             println("LogIn exitoso")
             println("Usuario: ${currentUser?.email}")
-            //Actualizar con la sesión iniciada!!!!!!!!!!!!!!!!!!!!!!!!
-            //crearUsuarioBD()
 
         }else{
             println("No has hecho login")
@@ -382,34 +334,45 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         }
 
     }
+
     fun btnRegistrarCuenta(v: View){
         val usuario = etNombreU.text.toString()
         val email = etEmail.text.toString()
         val password = etPassword.text.toString()
         val nombreU = etNombreU.text.toString()
-        val fechaN = etFecha.text.toString()
-
-        if(email != "" && password != "" && usuario != "" && nombreU != "" && fechaN != "" ) {
+        if(email != "" && password != "" && usuario != "" && nombreU != "") {
             registrarCuenta(email, password)
         }
-        
+
     }
+
     @SuppressLint("RestrictedApi")
     fun crearUsuarioBD(){
-        //Leer la información que ingresa el usuario
-        email = etEmail.text.toString()
-        password = etPassword.text.toString()
+        val email = etEmail.text.toString()
+        val password = etPassword.text.toString()
         val nombreU = etNombreU.text.toString()
-        val fechaN = etFecha.text.toString()
+
+        val lat = etLatitud.text.toString()
+        val long = etLongitud.text.toString()
+        val playListU = etPlayList.text.toString()
         //Obtenemos la llave del usuario con la referencia del database
         val referencia = database.getReference("/Usuarios").push()
         val llave = referencia.key
         println(llave)
         //Creamos el objeto con los datos
-        usuarioActual = Usuario(userID = llave!!, email = email, password=password, nombreU=nombreU, fechaN=fechaN)
+        usuarioActual = Usuario(
+            userID = llave!!,
+            email = email,
+            password = password,
+            nombreU = nombreU,
+            latitud = lat,
+            longitud = long,
+            playlist = playListU
+        )
         referencia.setValue(usuarioActual)
 
     }
+
 
     fun registrarCuenta(email: String, password: String){
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -443,11 +406,8 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
             }
     }
     fun btnIniciarSesion(v: View){
-        println("btnIniciarSesion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
          email = etIniEmail.text.toString()
          password = etIniPassword.text.toString()
-        println(email)
-        println(password)
 
 
         if(email != "" && password != "") {
@@ -478,7 +438,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                     var user = mAuth.currentUser
                     updateUI(user)
                     Pablo = "Perfil"
-                    usuarioActual = Usuario(user.toString(), email, password, "", "")
+                    usuarioActual = Usuario(user.toString(), email, password, "", "","","")
                     fragPerfil = FragmentoPerfil.newInstance(!encontrado,fragInicio,usuarioActual)
                     fragPerfil.setOnFragmentPerfilStoppedListener(this)
                     makeCurrentFragment(fragPerfil)
@@ -496,87 +456,24 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
             }
     }
     fun btnCerrarSesion(v: View){
-        //var textViewErase = findViewById<TextView>(R.id.etIniEmail)
-        //textViewErase.text = SpannableStringBuilder("")
         encontrado = false
-
-
-
+        Pablo = ""
         mAuth.signOut()
-        /*
-        if(etIniEmail.text.toString() == email){
-            etIniEmail.text?.clear()
-            etIniPassword.text?.clear()
-        }*/
-
-
-        //println(etIniEmail.text.toString())
         email = ""
         password = ""
-        mGoogleSignInClient.signOut()
         println("logOut exitoso")
-        Pablo = ""
+
         Toast.makeText(
             this@QRInicio, "Sesión Cerrada",
             Toast.LENGTH_SHORT
         ).show()
         makeCurrentFragment(fragPerfil.fragmentoBack)
     }
-    //Goggle methods
-    private fun updateUIGoogle(account: GoogleSignInAccount?) {
-        if(account != null){
-            println("Login Google exitoso")
-            println("Nombre: ${account.displayName}")
-            println("Correo: ${account.email}")
-            println("ID: ${account.id}")
-        }else{
-            println("No a hecho login en Google")
-        }
-    }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == LOGIN_GOOGLE) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            handleSignInResult(task)
-        } else if (requestCode == RC_BARCODE_CAPTURE) {
-            if (resultCode == SCAN_QR) {
-                if (data != null) {
-                    val datos = data.data.toString()
-                }
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
-
-    private fun handleSignInResult(task: Task<GoogleSignInAccount>) {
-        try {
-            val account: GoogleSignInAccount = task.getResult(ApiException::class.java)!!
-
-            // Signed in successfully, show authenticated UI.
-            updateUIGoogle(account)
-        } catch (e: ApiException) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            println("signInResult:failed code= ${e.statusCode}")
-            updateUIGoogle(null)
-        }
-    }
 
     override fun onStart() {
         super.onStart()
-        println("--------------------------------------------------- onStartQRInicio ---------------------------------------------------")
-        //val currentUser = mAuth.currentUser
-        //updateUI(currentUser)
     }
-
-    //Spotify
-    private val CLIENT_ID: String? = "571410421d934710ba3a3f201b170b50"
-    private val REDIRECT_URI = "https://mx.itesm.gbvm.playparty/callback"
-    private var mSpotifyAppRemote: SpotifyAppRemote? = null
-    //Hola
-
-
 
     private fun connected() {
         val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Conectado!", Snackbar.LENGTH_SHORT)

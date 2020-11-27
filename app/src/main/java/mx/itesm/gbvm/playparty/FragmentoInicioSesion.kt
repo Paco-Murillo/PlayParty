@@ -27,11 +27,6 @@ import kotlin.math.sign
 
 
 class FragmentoInicioSesion : Inicio_Registro() {
-    //var listener: ListenerGoogle? = null
-
-    private val LOGIN_GOOGLE: Int = 500
-    private lateinit var mGoogleSignInClient: GoogleSignInClient
-    private lateinit var listaDatabase: DatabaseReference
     lateinit var mView: View
 
     override fun onCreateView(
@@ -39,20 +34,7 @@ class FragmentoInicioSesion : Inicio_Registro() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_inicio_sesion, container, false)
-
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build()
-
-        mGoogleSignInClient = GoogleSignIn.getClient(AppPlayParty.context, gso);
-        //val account = GoogleSignIn.getLastSignedInAccount(AppPlayParty.context)
-        //updateUIGoogle(account)
-        mView.sign_in_button.setOnClickListener {
-            val intGoogle = mGoogleSignInClient.signInIntent
-            startActivityForResult(intGoogle, LOGIN_GOOGLE)
-        }
 
         return mView
 
@@ -60,14 +42,5 @@ class FragmentoInicioSesion : Inicio_Registro() {
     companion object{
         fun newInstance(): Inicio_Registro = FragmentoInicioSesion()
     }
-/*
-    fun fragLoginGoogle() {
-        mView.sign_in_button.setOnClickListener {
-            val iLoginGoogle = Intent(AppPlayParty.context, LoginGoogle::class.java)
-            //val intGoogle = mGoogleSignInClient.signInIntent
-            //startActivityForResult(intGoogle, LOGIN_GOOGLE)
-            startActivity(iLoginGoogle)
-        }
-    }*/
 }
 

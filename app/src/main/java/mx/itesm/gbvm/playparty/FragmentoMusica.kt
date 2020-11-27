@@ -63,8 +63,6 @@ class FragmentoMusica(var idMusica: String = "") : Fragment() {
                 val arreglo1 = Array(miArreglo.size){Tarjeta()}
                 array = miArreglo.toArray(arreglo1)
 
-                //adaptador = Adaptador(array, this@FragmentoMusica, idMusica)
-                //rvTarjetas.adapter = adaptador
                 println("OnArrayChanged Fragmento Musica")
                 println(snapshot)
                 callback.onArrayChanged(array)
