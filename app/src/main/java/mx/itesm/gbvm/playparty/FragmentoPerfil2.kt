@@ -123,25 +123,35 @@ class FragmentoPerfil2 : Fragment() {
                 referencia.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onCancelled(error: DatabaseError) {
                     }
+
                     @RequiresApi(Build.VERSION_CODES.N)
                     override fun onDataChange(snapshot: DataSnapshot) {
                         snapshot.children.forEach { registro ->
                             val tarjeta = registro.getValue(Tarjeta::class.java)!!
                             miArreglo.add(tarjeta)
                         }
-                        val arreglo1 = Array(miArreglo.size){Tarjeta()}
+                        val arreglo1 = Array(miArreglo.size) { Tarjeta() }
                         array = miArreglo.toArray(arreglo1)
                         array.sortWith(Tarjeta.Comparator().reversed())
                         play(array[0].idSong)
                         contador(array[0].tiempo)
+                        baseDatos.getReference("/Usuarios/${usuario.userID}/Playlist/${array[0].idSong}/points")
+                            .setValue(0)
                     }
                 })
             }
-
         }
         timer.start()
     }
+    /*
+    fun mostrarQR(){
+        try {
 
+            var bm = encodeAsBitMap(usuario.userID, BarcodeFormat.QR_CODE,150,150)
+        }
+    }
+
+     */
     private fun play(cancion: String){
         var track = "spotify:track:"+ cancion
         mSpotifyAppRemote?.getPlayerApi()?.play(track)

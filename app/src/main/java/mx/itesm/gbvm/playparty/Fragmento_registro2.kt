@@ -20,6 +20,7 @@ class Fragmento_registro2 : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
+
     }
 
     override fun onCreateView(
@@ -32,6 +33,9 @@ class Fragmento_registro2 : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        btnAtras.setOnClickListener {
+            QRInicio.makeCurrentFragment(Fragmento_RI.newInstance(QRInicio))
+        }
         btnRegistrarse.setOnClickListener {
             val usuario = etNombreU.text.toString()
             val email = etEmail.text.toString()
@@ -45,7 +49,7 @@ class Fragmento_registro2 : Fragment() {
             else
             {
                 Toast.makeText(
-                    context, "llene todos los campos",
+                    context, "Llene todos los campos",
                     Toast.LENGTH_SHORT
                 ).show()
             }

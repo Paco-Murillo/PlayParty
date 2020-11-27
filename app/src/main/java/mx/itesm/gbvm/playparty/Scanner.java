@@ -17,6 +17,7 @@ import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -42,7 +43,11 @@ public class Scanner extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.scanner);
-
+        Button elNombreQueQuieras = findViewById(R.id.btnBack_Scanner);
+        elNombreQueQuieras.setOnClickListener(view ->
+        {
+            finishOnButton(view);
+        });
         vistaCamara = findViewById(R.id.surfaceView);
         iniciarQR();
     }
@@ -197,17 +202,15 @@ public class Scanner extends AppCompatActivity
 
     public void finishOnButton(View v){
         camara.release();
-        vistaCamara = null;
-        camara = null;
+
         finish();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        camara.release();
+
         vistaCamara = null;
-        camara = null;
     }
 
     private enum Permiso{

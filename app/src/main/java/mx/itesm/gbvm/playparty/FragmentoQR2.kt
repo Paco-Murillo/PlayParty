@@ -50,6 +50,7 @@ class FragmentoQR2 : Fragment() {
     }
     fun valid(idMusica: String){
         this.idMusica = idMusica
+        var boolean = false
         val baseDatos = FirebaseDatabase.getInstance()
         val referencia = baseDatos.getReference("/Usuarios")
         referencia.addValueEventListener(object : ValueEventListener {
@@ -57,21 +58,22 @@ class FragmentoQR2 : Fragment() {
             }
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (registro in snapshot.children) {
-                    val establecimiento =
-                        registro.getValue(Establecimiento::class.java)
-                    if (establecimiento != null) {
-                        val id = establecimiento.userID
+                    val usuario =
+                        registro.getValue(Usuario::class.java)
+                    if (usuario != null) {
+                        val id = usuario.userID
                         if (id == idMusica) {
                             QRInicio.cambiarMusica(FragmentoMusica2.newInstance(QRInicio,idMusica))
+                            boolean = true
                         }
 
                     }
-                    else{
-                        Toast.makeText(
-                            QRInicio, "IDInvalido!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                }
+                if(!boolean){
+                    Toast.makeText(
+                        QRInicio, "ID Invalido!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         })

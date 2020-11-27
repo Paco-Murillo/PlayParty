@@ -34,7 +34,7 @@ class FragmentoMapa(posicion: Location?) : Fragment(){
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (registro in snapshot.children) {
                     //leer coordenadas de gps (combinar practica de gps)
-                    val establecimiento = registro.getValue(mx.itesm.gbvm.playparty.Establecimiento::class.java)
+                    val establecimiento = registro.getValue(mx.itesm.gbvm.playparty.Usuario::class.java)
                     if (establecimiento != null) {
                         val nombre = establecimiento.nombreU
                         val latLng = LatLng(establecimiento.latitud.toDouble(), establecimiento.longitud.toDouble())
