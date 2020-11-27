@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,34 +10,71 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#000000"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView10"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:layout_marginBottom="20dp"
+            android:elegantTextHeight="true"
             android:text="PlayParty"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="36sp" />
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/common_google_signin_btn_icon_dark" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="100dp"
             android:text="Escoge tu música favorita"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/btnSesion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
             android:background="#AA64E5"
-            android:text="INICIO SESIÓN" />
+            android:text="INICIO SESIÓN"
+            android:textColor="#FFFFFF" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/divider4"
+                android:layout_width="170dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="#FFB300" />
+
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="170dp"
+                android:layout_height="1dp"
+                android:background="#FFB300" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/btnReg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#AA64E5"
-            android:text="REGISTRATE" />
+            android:text="REGISTRATE"
+            android:textColor="#FFFFFF" />
     </LinearLayout>
 
 </FrameLayout>
