@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class FragmentoMusica : Fragment() {
 
@@ -36,35 +38,28 @@ class FragmentoMusica : Fragment() {
     }
 
     private fun crearArrTarjetas(): Array<Tarjeta> {
-        var arreglo = arrayOf(
-            Tarjeta(4, "No Money", "Galantis", "https://i.scdn.co/image/ab67616d0000b273119cb56f073efd326643dcfe", 189126, "540vIaP2JwjQb9dm3aArA4"),
-            Tarjeta(4, "DJ Snake", "Middle", "https://i.scdn.co/image/ab67616d0000b273212d776c31027c511f0ee3bc", 220573,"0gb1J5UrTpzaU1s3nupgCd"),
-            Tarjeta(0, "Cheap Thrills", "Sia", "https://i.scdn.co/image/ab67616d0000b27349e0134c686547c28b7c999f", 211666, "27SdWb2rFzO6GWiYDBTD9j")
-        )
 
         val miArreglo = ArrayList<Tarjeta>()
-        referencia = database.getReference("Establecimientos/MJQtwPWvTOlnMHj0VdF/Playlist")
-        referencia.addValueEventListener(object : ValueEventListener {
+        referencia = database.getReference("/Establecimientos/-MJQtwPWvTOlnMHj0VdF/Playlist/")
+        referencia.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                System.out.println("Hola")
-                var i = 0
-                for (registro in snapshot.children) {
-                    System.out.println(registro)
-                    i++
-                    val tarjeta =
-                        registro.getValue(mx.itesm.gbvm.playparty.Tarjeta::class.java)
-                    if (tarjeta != null) {
-                        arreglo.set(i,tarjeta)
-                        miArreglo.add(tarjeta)
-                    }
+                println("Hola")
+                println(snapshot)
+                snapshot.children.forEach { registro ->
+                    val tarjeta = registro.getValue(Tarjeta::class.java)!!
+                    println(tarjeta)
+                    miArreglo.add(tarjeta)
                 }
+                println("Adios")
             }
         })
-        System.out.println(miArreglo.toString())
-        return arreglo
+        val arreglo1 = Array(miArreglo.size){Tarjeta()}
+
+        println(Arrays.toString(miArreglo.toArray(arreglo1)))
+        return miArreglo.toArray(arreglo1)
     }
 
 }
