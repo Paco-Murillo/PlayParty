@@ -21,13 +21,15 @@
                 android:id="@+id/btnSalir"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:background="#AA64E5"
                 android:text="Atrás"
-                android:textAlignment="viewStart" />
+                android:textAlignment="center"
+                android:textColor="#FFFFFF" />
 
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvTarjetas"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
