@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:onClick="btnInicio"
     tools:context=".FragmentoPerfil2">
 
     <!-- TODO: Update blank fragment layout -->
@@ -16,13 +15,42 @@
             android:id="@+id/tfNombreU"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="USUARIO" />
+
+        <TextView
+            android:id="@+id/tfemail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="EMAIL" />
+
+        <TextView
+            android:id="@+id/tfpassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CONTRASEÑA" />
+
+        <Button
+            android:id="@+id/btnSpotify"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#AA64E5"
+            android:text="CONECTAR SPOTIFY"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/btnCancion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#AA64E5"
+            android:text="CANCIÓN"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/btnCerrar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="CERRAR SESIÓN" />
+
     </LinearLayout>
 
 </FrameLayout>
