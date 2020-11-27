@@ -1,5 +1,6 @@
 package mx.itesm.gbvm.playparty
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,8 +14,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.fragment_fragmento_inicio_sesion2.*
-import kotlinx.android.synthetic.main.fragment_inicio_sesion.etIniEmail
-import kotlinx.android.synthetic.main.fragment_inicio_sesion.etNombreU
 
 
 class FragmentoInicioSesion2 : Fragment() {
@@ -31,17 +30,24 @@ class FragmentoInicioSesion2 : Fragment() {
     fun btnIniciarSesion(){
         val email = etIniEmail.text.toString()
         val password = etNombreU.text.toString()
-
-        println("Hola")
         if(email != "" && password != "") {
             iniciarSesion(email, password)
         }else if(email == ""){
-            println("No ha ingresado correo ")
+            Toast.makeText(
+                context, "No ha ingresado correo ",
+                Toast.LENGTH_SHORT
+            ).show()
 
         }else if(password ==""){
-            println("No ha ingresado contraseña")
+            Toast.makeText(
+                context, "No ha ingresado contraseña",
+                Toast.LENGTH_SHORT
+            ).show()
         }else{
-            println("No has ingresado correo y contraseña")
+            Toast.makeText(
+                context, "No has ingresado correo y contraseña",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
     fun iniciarSesion(email: String, password: String){
@@ -50,8 +56,6 @@ class FragmentoInicioSesion2 : Fragment() {
                 QRInicio
             ) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    println("signInWithEmail:success")
                     Toast.makeText(
                         QRInicio, "Sesión Iniciada",
                         Toast.LENGTH_SHORT
@@ -67,8 +71,7 @@ class FragmentoInicioSesion2 : Fragment() {
                                 val usuarioBuscado = registro.getValue(Usuario::class.java)!!
                                 if (snapshot.exists()) {
                                     if (email == usuarioBuscado.email) {
-                                        println(usuarioBuscado.nombreU)
-                                        QRInicio.makeCurrentFragment(FragmentoPerfil2.newInstance(usuarioBuscado,mAuth,QRInicio))
+                                        QRInicio.cambiarPerfil(FragmentoPerfil2.newInstance(usuarioBuscado,mAuth,QRInicio))
                                         break
                                     }
                                 }
@@ -77,14 +80,13 @@ class FragmentoInicioSesion2 : Fragment() {
 
                         override fun onCancelled(error: DatabaseError) {
                             Toast.makeText(
-                                context, "No se pueden leer los datos del Usuario",
+                                QRInicio, "No se pueden leer los datos del Usuario",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                     })
 
                 } else {
-                    println("signInWithEmail:failure ${task.exception}")
                     Toast.makeText(
                         QRInicio, "Fallo de autenticación.",
                         Toast.LENGTH_SHORT
@@ -107,6 +109,9 @@ class FragmentoInicioSesion2 : Fragment() {
         super.onActivityCreated(savedInstanceState)
         btnRegistrarse.setOnClickListener {
             btnIniciarSesion()
+        }
+        btnAtras.setOnClickListener {
+            QRInicio.cambiarPerfil(Fragmento_RI.newInstance(QRInicio))
         }
     }
 

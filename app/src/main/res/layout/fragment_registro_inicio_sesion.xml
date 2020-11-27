@@ -40,7 +40,7 @@
         android:layout_marginTop="120dp"
         android:layout_marginEnd="16dp"
         android:background="#AA64E5"
-        android:onClick="btnFragInicioSesion"
+        android:onClick="btnFrag"
         android:text="Inicia Sesión"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"

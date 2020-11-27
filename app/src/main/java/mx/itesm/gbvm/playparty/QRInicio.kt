@@ -10,9 +10,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.provider.Settings
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,49 +18,36 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
-import com.spotify.protocol.types.PlayerState
-import com.spotify.protocol.types.Track
-import kotlinx.android.synthetic.main.fragment_inicio_sesion.*
 import kotlinx.android.synthetic.main.fragment_qr.*
-import kotlinx.android.synthetic.main.fragment_registro.*
-import kotlinx.android.synthetic.main.fragment_registro.etEmail
-import kotlinx.android.synthetic.main.fragment_registro.etPassword
-import kotlinx.android.synthetic.main.fragment_registro_inicio_sesion.*
 import kotlinx.android.synthetic.main.qr_inicio.*
 
 
-class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListener, FragmentoQR.OnHeadlineSelectedListener, FragmentoPerfil.OnNewArrayListener {
+class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListener, FragmentoQR.OnHeadlineSelectedListener{
     private var gps: GPS? = null
     private val CODIGO_PERMISO_GPS: Int = 200
     private var posicion: Location? = null
 
     //Spotify
-    private val CLIENT_ID: String? = "571410421d934710ba3a3f201b170b50"
-    private val REDIRECT_URI = "https://mx.itesm.gbvm.playparty/callback"
-    private var mSpotifyAppRemote: SpotifyAppRemote? = null
+
 
     // Validacion ID
     var idMusica:String = ""
     var BotonValido: Boolean = false
     private  val database = FirebaseDatabase.getInstance()
     private lateinit var referencia: DatabaseReference
-    private var Pablo = ""
-
-
-    //Google Autenticador
-    private lateinit var mAuth: FirebaseAuth
-    private var usuarioActual: Usuario = Usuario()
-    var email = ""
-    var password = ""
+    private var Perfil : Fragment = Fragmento_RI.newInstance(this)
 
     //qr
     val SCAN_QR = 6670
+
+    fun cambiarPerfil(fragment: Fragment){
+        Perfil = fragment
+        makeCurrentFragment(Perfil)
+    }
 
     fun makeCurrentFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
@@ -77,8 +62,6 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         super.onCreate(savedInstanceState)
         setContentView(R.layout.qr_inicio)
 
-        mAuth = FirebaseAuth.getInstance()
-
 
         var QRFragment = FragmentoQR(this)
 
@@ -91,20 +74,16 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         bottom_nav.setOnNavigationItemSelectedListener {
             when (it.itemId){
                 R.id.nav_perfil ->
-                    if (Pablo == "Inicio") {
-                        makeCurrentFragment(FragmentoInicioSesion2.newInstance(this))
-                    } else {
-                        makeCurrentFragment(Registro_o_InicioDeSesion())
-                    }
+                    makeCurrentFragment(Perfil)
                 R.id.nav_Musica ->
-                    if (BotonValido) {
-                        makeCurrentFragment(FragmentoMusica(idMusica))
+                if (BotonValido) {
+                    makeCurrentFragment(FragmentoMusica(idMusica))
 
-                    } else {
-                        makeCurrentFragment(QRFragment)
-                    }
+                } else {
+                    makeCurrentFragment(QRFragment)
+                }
                 R.id.nav_Mapa -> makeCurrentFragment(FragmentoMapa(posicion))
-            }
+                }
             true
         }
     }
@@ -141,47 +120,8 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         valid(idMusica)
     }
 
-    fun btnIniciarSpotify(v: View){
-        val connectionParams = ConnectionParams.Builder(CLIENT_ID)
-            .setRedirectUri(REDIRECT_URI)
-            .showAuthView(true)
-            .build()
-
-        SpotifyAppRemote.connect(this, connectionParams,
-            object : Connector.ConnectionListener {
-                override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
-                    mSpotifyAppRemote = spotifyAppRemote
-                    val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Conectado!", Snackbar.LENGTH_SHORT)
-                    mySnackbar.show()
-                    mSpotifyAppRemote!!.playerApi
-                        .subscribeToPlayerState()
-                        .setEventCallback { playerState: PlayerState ->
-                            val track: Track? = playerState.track
-                            if (track != null) {
-                                Log.d("MainActivity", track.name.toString() + " by " + track.artist.name)
-                            }
-                        }
-                    connected()
-                }
-
-                override fun onFailure(throwable: Throwable) {
-                    val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Fallo!", Snackbar.LENGTH_SHORT)
-                    mySnackbar.show()
-                }
-            })
-    }
-    fun btnFragInicioSesion(v: View){
-        Pablo = "Inicio"
+    fun btnFrag(v:View){
         makeCurrentFragment(FragmentoInicioSesion2.newInstance(this))
-    }
-
-    fun btnFragRegistro(v: View){
-        Pablo = "Registro"
-    }
-
-    fun btnFragBackIniReg(v: View){
-        Pablo = ""
-        makeCurrentFragment(Registro_o_InicioDeSesion())
     }
 
     fun btnQR(v: View){
@@ -296,7 +236,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         if(currentUser!= null) {
 
             println("LogIn exitoso")
-            println("Usuario: ${currentUser?.email}")
+            println("Usuario: ${currentUser.email}")
 
         }else{
             println("No has hecho login")
@@ -306,40 +246,40 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     }
 
     fun btnRegistrarCuenta(v: View){
-        val usuario = etNombreU.text.toString()
-        val email = etEmail.text.toString()
-        val password = etPassword.text.toString()
-        val nombreU = etNombreU.text.toString()
-        if(email != "" && password != "" && usuario != "" && nombreU != "") {
-            registrarCuenta(email, password)
-        }
+        //val usuario = etNombreU.text.toString()
+        //val email = etEmail.text.toString()
+        //val password = etPassword.text.toString()
+        //val nombreU = etNombreU.text.toString()
+        //if(email != "" && password != "" && usuario != "" && nombreU != "") {
+        //    registrarCuenta(email, password)
+        //}
 
     }
 
     @SuppressLint("RestrictedApi")
     fun crearUsuarioBD(){
-        val email = etEmail.text.toString()
-        val password = etPassword.text.toString()
-        val nombreU = etNombreU.text.toString()
-
-        val lat = etLatitud.text.toString()
-        val long = etLongitud.text.toString()
-        val playListU = etPlayList.text.toString()
-        //Obtenemos la llave del usuario con la referencia del database
-        val referencia = database.getReference("/Usuarios").push()
-        val llave = referencia.key
-        println(llave)
-        //Creamos el objeto con los datos
-        usuarioActual = Usuario(
-            userID = llave!!,
-            email = email,
-            password = password,
-            nombreU = nombreU,
-            latitud = lat,
-            longitud = long,
-            playlist = playListU
-        )
-        referencia.setValue(usuarioActual)
+        //val email = etEmail.text.toString()
+        //val password = etPassword.text.toString()
+        //val nombreU = etNombreU.text.toString()
+//
+        //val lat = etLatitud.text.toString()
+        //val long = etLongitud.text.toString()
+        //val playListU = etPlayList.text.toString()
+        ////Obtenemos la llave del usuario con la referencia del database
+        //val referencia = database.getReference("/Usuarios").push()
+        //val llave = referencia.key
+        //println(llave)
+        ////Creamos el objeto con los datos
+        //val usuarioActual = Usuario(
+        //    userID = llave!!,
+        //    email = email,
+        //    password = password,
+        //    nombreU = nombreU,
+        //    latitud = lat,
+        //    longitud = long,
+        //    playlist = playListU
+        //)
+        //referencia.setValue(usuarioActual)
 
     }
 
@@ -348,9 +288,6 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
     }
     fun btnIniciarSesion(v: View){
-
-    }
-    fun iniciarSesion(email: String, password: String){
 
     }
     fun btnCerrarSesion(v: View){
@@ -373,11 +310,6 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         super.onStart()
     }
 
-    private fun connected() {
-        val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Conectado!", Snackbar.LENGTH_SHORT)
-        mySnackbar.show()
-    }
-
     override fun onStop() {
         super.onStop()
         // Aaand we will finish off here.
@@ -395,31 +327,5 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         println(string)
         valid(string)
     }
-    fun contador(tiempo:Int){
-        val timer = object: CountDownTimer(tiempo.toLong() * 1000,1000){
-            override fun onTick(millisSec: Long) {
-                println(millisSec)
-            }
 
-            override fun onFinish() {
-                play("0ct6r3EGTcMLPtrXHDvVjc")
-                contador(185)
-            }
-
-        }
-        timer.start()
-    }
-    fun instanciarLista(v: View){
-        play("040SAk4tIYfcqHXWF6yfpG")
-        contador(185)
-    }
-
-    private fun play(cancion: String){
-        var track = "spotify:track:"+ cancion
-        mSpotifyAppRemote?.getPlayerApi()?.play(track)
-    }
-
-    override fun onFragmentPerfilStopped(usuario: Usuario) {
-        TODO("Not yet implemented")
-    }
 }

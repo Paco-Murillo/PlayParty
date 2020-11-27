@@ -1,5 +1,6 @@
 package mx.itesm.gbvm.playparty
 
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,8 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.renglon_musica.view.*
+import java.net.URL
+
 
 class Adaptador(
     var arrDatos: Array<Tarjeta>,
@@ -82,6 +85,9 @@ class Adaptador(
 
     class VistaRenglon(val vistaRenglon: View) : RecyclerView.ViewHolder(vistaRenglon) {
         fun set(tarjeta: Tarjeta) {
+            val url = URL("http://image10.bizrate-images.com/resize?sq=60&uid=2216744464")
+            val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+            vistaRenglon.imageAlbum.setImageBitmap(bmp)
             vistaRenglon.Cancion.text = tarjeta.cancion
             vistaRenglon.Artista.text = tarjeta.artista
             val string = tarjeta.points.toString() + " Likes"
