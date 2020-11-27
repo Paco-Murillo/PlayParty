@@ -68,20 +68,25 @@
             android:text="CONECTAR SPOTIFY"
             android:textColor="#FFFFFF" />
 
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/Playlist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="ID"
-            android:textColor="#FDF9F9"
-            android:textSize="36sp" />
+            android:textColorHint="#FFFFFF">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/PlayList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:hint="ID"
+                android:textAllCaps="true"
+                android:textSize="36sp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
             android:orientation="horizontal">
 
             <Button

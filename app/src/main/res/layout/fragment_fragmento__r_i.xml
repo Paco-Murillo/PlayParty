@@ -29,7 +29,9 @@
             android:id="@+id/imageView6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/common_google_signin_btn_icon_dark" />
+            android:layout_marginBottom="50dp"
+            android:src="@drawable/common_google_signin_btn_icon_dark"
+            app:srcCompat="@drawable/ic_launcher_foreground" />
 
         <TextView
             android:layout_width="match_parent"
@@ -37,6 +39,7 @@
             android:layout_marginBottom="100dp"
             android:text="Escoge tu música favorita"
             android:textAlignment="center"
+            android:textAllCaps="true"
             android:textColor="#FFFFFF" />
 
         <Button
