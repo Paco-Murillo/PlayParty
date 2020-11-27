@@ -59,9 +59,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="40dp"
             android:layout_marginTop="20dp"
-            android:layout_marginRight="40dp"
             android:layout_marginBottom="50dp"
             android:orientation="horizontal">
 
@@ -91,9 +89,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:layout_marginBottom="190dp"
+            android:layout_marginBottom="50dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -101,7 +97,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:src="@drawable/ic_launcher_foreground"
-                app:srcCompat="@drawable/ic_baseline_vpn_key_24" />
+                app:srcCompat="@drawable/ic_baseline_vpn_key_24"
+                tools:srcCompat="@drawable/ic_baseline_vpn_key_24" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"

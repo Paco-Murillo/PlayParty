@@ -66,7 +66,6 @@ class FragmentoMusica2 : Fragment() {
                 array = miArreglo.toArray(arreglo1)
                 array.sortWith(Tarjeta.Comparator().reversed())
                 rvTarjetas.adapter = Adaptador(array, idMusica)
-
             }
         })
     }

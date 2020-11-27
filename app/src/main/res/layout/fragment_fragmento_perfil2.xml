@@ -33,31 +33,28 @@
             android:id="@+id/tfNombreU"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
             android:text="USUARIO"
             android:textAlignment="center"
             android:textColor="#FDF9F9"
-            android:textSize="36sp" />
+            android:textSize="10sp" />
 
         <TextView
             android:id="@+id/tfemail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
             android:text="EMAIL"
             android:textAlignment="center"
             android:textColor="#FDF9F9"
-            android:textSize="36sp" />
+            android:textSize="10sp" />
 
         <TextView
             android:id="@+id/tfID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="52dp"
             android:text="ID"
             android:textAlignment="center"
             android:textColor="#FDF9F9"
-            android:textSize="36sp" />
+            android:textSize="10sp" />
 
         <Button
             android:id="@+id/btnSpotify"
@@ -79,6 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
+                android:background="#000000"
                 android:hint="ID"
                 android:textAllCaps="true"
                 android:textSize="36sp" />
