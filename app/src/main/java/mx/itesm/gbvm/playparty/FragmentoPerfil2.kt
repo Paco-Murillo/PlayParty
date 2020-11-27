@@ -2,6 +2,7 @@ package mx.itesm.gbvm.playparty
 
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.SpannableStringBuilder
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.text.set
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.spotify.android.appremote.api.ConnectionParams
@@ -43,7 +45,7 @@ class FragmentoPerfil2 : Fragment() {
         tfNombreU.text = usuario.nombreU
         tfemail.text = usuario.email
         tfID.text = usuario.userID
-        //PlayList = usuario.playlist
+        PlayList.text = SpannableStringBuilder(usuario.playlist)
         btnCerrar.setOnClickListener {
             mAuth.signOut()
             QRInicio.cambiarPerfil(FragmentoInicioSesion2.newInstance(QRInicio))

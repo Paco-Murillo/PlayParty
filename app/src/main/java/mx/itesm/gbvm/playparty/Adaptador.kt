@@ -1,5 +1,6 @@
 package mx.itesm.gbvm.playparty
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.view.LayoutInflater
@@ -7,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
+import com.androidnetworking.AndroidNetworking
+import com.androidnetworking.error.ANError
+import com.androidnetworking.interfaces.BitmapRequestListener
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.renglon_musica.view.*
 import java.net.URL
@@ -28,27 +32,16 @@ class Adaptador(var arrDatos: Array<Tarjeta>, var idMusica: String) : RecyclerVi
             actualizarBD(tarjeta)
             val string = arrDatos[position].points.toString() + " Likes"
             holder.vistaRenglon.Count.text = string
-            notifyDataSetChanged()
             onArrayChanged()
+            notifyDataSetChanged()
+
         }
         holder.set(tarjeta)
     }
 
     fun actualizarBD(tarjeta: Tarjeta){
-        var referencia = FirebaseDatabase.getInstance().getReference("/Usuarios/$idMusica/Playlist")
-        referencia.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {
-            }
-            override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.children.forEach { registro ->
-                    val thisTarjeta = registro.getValue(Tarjeta::class.java)!!
-                    if (tarjeta.idSong == thisTarjeta.idSong) {
-                        var referencia = FirebaseDatabase.getInstance().getReference("/Usuarios/$idMusica/Playlist/${registro.key!!}/points")
-                        referencia.setValue(tarjeta.points)
-                    }
-                }
-            }
-        })
+        var referencia = FirebaseDatabase.getInstance().getReference("/Usuarios/$idMusica/Playlist/${tarjeta.idSong}/points")
+        referencia.setValue(tarjeta.points)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -68,6 +61,18 @@ class Adaptador(var arrDatos: Array<Tarjeta>, var idMusica: String) : RecyclerVi
 
     class VistaRenglon(val vistaRenglon: View) : RecyclerView.ViewHolder(vistaRenglon) {
         fun set(tarjeta: Tarjeta) {
+
+            AndroidNetworking.get(tarjeta.idImagen).build().getAsBitmap(object : BitmapRequestListener {
+                override fun onResponse(response: Bitmap?) {
+                    vistaRenglon.imageAlbum.setImageBitmap(response!!)
+                }
+
+                override fun onError(anError: ANError?) {
+                //Poner imagen generica
+                }
+
+            })
+
             vistaRenglon.Cancion.text = tarjeta.cancion
             vistaRenglon.Artista.text = tarjeta.artista
             val string = tarjeta.points.toString() + " Likes"

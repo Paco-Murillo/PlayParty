@@ -1,10 +1,12 @@
 package mx.itesm.gbvm.playparty
 
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DataSnapshot
@@ -45,7 +47,6 @@ class FragmentoMusica2 : Fragment() {
         val admLayout = LinearLayoutManager(QRInicio)
         rvTarjetas.layoutManager = admLayout
         crearArrTarjetas()
-
     }
 
     private fun crearArrTarjetas(){
@@ -55,6 +56,7 @@ class FragmentoMusica2 : Fragment() {
         referencia.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
             }
+            @RequiresApi(Build.VERSION_CODES.N)
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach { registro ->
                     val tarjeta = registro.getValue(Tarjeta::class.java)!!
@@ -62,7 +64,9 @@ class FragmentoMusica2 : Fragment() {
                 }
                 val arreglo1 = Array(miArreglo.size){Tarjeta()}
                 array = miArreglo.toArray(arreglo1)
+                array.sortWith(Tarjeta.Comparator().reversed())
                 rvTarjetas.adapter = Adaptador(array, idMusica)
+
             }
         })
     }
