@@ -64,30 +64,12 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     //qr
     val SCAN_QR = 6670
 
-    // Fragments
-    var fragInicio = FragmentoInicioSesion.newInstance()
-    var fragRegistro = FragmentoRegistro.newInstance()
-
-    //Aquí aun no hay usuario definido
-    var buscar = false
-    var encontrado = false
-    var fragPerfil = FragmentoPerfil.newInstance(buscar,fragRegistro,usuarioActual)
-    init {
-        fragPerfil.setOnFragmentPerfilStoppedListener(this)
-    }
-
-    private fun makeCurrentFragment(fragment: Fragment) {
+    fun makeCurrentFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(fragment.toString())
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
             .commit()
-    }
-
-    override fun onFragmentPerfilStopped(usuario: Usuario) {
-        buscar = false
-        encontrado = true
-        usuarioActual = usuario
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,11 +92,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
             when (it.itemId){
                 R.id.nav_perfil ->
                     if (Pablo == "Inicio") {
-                        makeCurrentFragment(fragInicio)
-                    } else if (Pablo == "Registro") {
-                        makeCurrentFragment(fragRegistro)
-                    } else if (Pablo == "Perfil") {
-                        makeCurrentFragment(fragPerfil)
+                        makeCurrentFragment(FragmentoInicioSesion2.newInstance(this))
                     } else {
                         makeCurrentFragment(Registro_o_InicioDeSesion())
                     }
@@ -194,12 +172,11 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     }
     fun btnFragInicioSesion(v: View){
         Pablo = "Inicio"
-        makeCurrentFragment(fragInicio)
+        makeCurrentFragment(FragmentoInicioSesion2.newInstance(this))
     }
 
     fun btnFragRegistro(v: View){
         Pablo = "Registro"
-        makeCurrentFragment(fragRegistro)
     }
 
     fun btnFragBackIniReg(v: View){
@@ -368,99 +345,27 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
 
     fun registrarCuenta(email: String, password: String){
-        mAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(
-                this
-            ) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    println("createUserWithEmail:success")
-                    val user = mAuth.currentUser
-                    Toast.makeText(
-                        this@QRInicio, "Cuenta creada",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    crearUsuarioBD()
-                    updateUI(user)
-                    Pablo = "Perfil"
-                    fragPerfil = FragmentoPerfil.newInstance(buscar,fragRegistro,usuarioActual)
-                    fragPerfil.setOnFragmentPerfilStoppedListener(this)
-                    makeCurrentFragment(fragPerfil)
-                } else {
-                    // If sign in fails, display a message to the user.
-                    println("createUserWithEmail:failure${task.exception}")
-                    Toast.makeText(
-                        this@QRInicio, "Authentication failed.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    updateUI(null)
-                }
 
-            }
     }
     fun btnIniciarSesion(v: View){
-         email = etIniEmail.text.toString()
-         password = etIniPassword.text.toString()
 
-
-        if(email != "" && password != "") {
-            iniciarSesion(email, password)
-        }else if(email == ""){
-            println("No ha ingresado correo ")
-            Toast.makeText(this@QRInicio, "No ha ingresado correo", Toast.LENGTH_SHORT).show()
-        }else if(password ==""){
-            println("No ha ingresado contraseña")
-            Toast.makeText(this@QRInicio, "No ha ingresado contraseña", Toast.LENGTH_SHORT).show()
-        }else{
-            println("No has ingresado correo y contraseña")
-            Toast.makeText(this@QRInicio, "No ha ingresado correo y contraseña", Toast.LENGTH_SHORT).show()
-        }
     }
     fun iniciarSesion(email: String, password: String){
-        mAuth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(
-                this
-            ) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    println("signInWithEmail:success")
-                    Toast.makeText(
-                        this@QRInicio, "Sesión Iniciada",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    var user = mAuth.currentUser
-                    updateUI(user)
-                    Pablo = "Perfil"
-                    usuarioActual = Usuario(user.toString(), email, password, "", "","","")
-                    fragPerfil = FragmentoPerfil.newInstance(!encontrado,fragInicio,usuarioActual)
-                    fragPerfil.setOnFragmentPerfilStoppedListener(this)
-                    makeCurrentFragment(fragPerfil)
-                } else {
-                    // If sign in fails, display a message to the user.
-                    println("signInWithEmail:failure ${task.exception}")
-                    Toast.makeText(
-                        this@QRInicio, "Fallo de autenticación.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    //Podemos apagar botones o lanzar a una segunda actividad
-                    updateUI(null)
-                }
 
-            }
     }
     fun btnCerrarSesion(v: View){
-        encontrado = false
-        Pablo = ""
-        mAuth.signOut()
-        email = ""
-        password = ""
-        println("logOut exitoso")
-
-        Toast.makeText(
-            this@QRInicio, "Sesión Cerrada",
-            Toast.LENGTH_SHORT
-        ).show()
-        makeCurrentFragment(fragPerfil.fragmentoBack)
+        //encontrado = false
+        //Pablo = ""
+        //mAuth.signOut()
+        //email = ""
+        //password = ""
+        //println("logOut exitoso")
+//
+        //Toast.makeText(
+        //    this@QRInicio, "Sesión Cerrada",
+        //    Toast.LENGTH_SHORT
+        //).show()
+        //makeCurrentFragment(fragPerfil.fragmentoBack)
     }
 
 
@@ -512,5 +417,9 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private fun play(cancion: String){
         var track = "spotify:track:"+ cancion
         mSpotifyAppRemote?.getPlayerApi()?.play(track)
+    }
+
+    override fun onFragmentPerfilStopped(usuario: Usuario) {
+        TODO("Not yet implemented")
     }
 }
