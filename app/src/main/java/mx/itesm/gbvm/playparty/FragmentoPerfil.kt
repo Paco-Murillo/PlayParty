@@ -29,7 +29,6 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean, fragmentoBack:Inicio_Regist
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println(" --------------------------------------------------- onCreate ---------------------------------------------------")
         /*
         textfNombreU = view?.findViewById(R.id.tfNombreU) as TextView
         textfEmail = view?.findViewById(R.id.tfemail) as TextView
@@ -57,15 +56,12 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean, fragmentoBack:Inicio_Regist
         super.onStart()
 
         leerDatosUsuario()
-
-        println(usuario.nombreU)
-        println("OnStart")
-        println(flagEncontrado)
         if (flagEncontrado) {
-            println("Mostrar Usuario")
-            println(usuario)
             mostrarUsuario()
         }
+        println("onstart")
+        println(flagEncontrado)
+        println(usuario)
     /*
         if (usuario!=null) {
             mostrarUsuario()
@@ -76,13 +72,12 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean, fragmentoBack:Inicio_Regist
 
     override fun onResume() {
         super.onResume()
-        println("onResume")
-        println(flagEncontrado)
-        if (flagEncontrado) {
-            println("Mostrar Usuario")
-            println(usuario)
+        if (flagEncontrado){
             mostrarUsuario()
         }
+        println("onresume")
+        println(flagEncontrado)
+        println(usuario)
     }
 
     private fun leerDatosUsuario(){
@@ -172,6 +167,7 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean, fragmentoBack:Inicio_Regist
     }
 
     private fun mostrarUsuario() {
+        println("Mostrar usuario")
         textEmail.text = (usuario.email)
             textNombreU.text = (usuario.nombreU)
             textFechaN.text = (usuario.fechaN)
@@ -195,5 +191,8 @@ class FragmentoPerfil(user: Usuario, buscar:Boolean, fragmentoBack:Inicio_Regist
     interface OnNewArrayListener{
         fun onFragmentPerfilStopped(usuario: Usuario)
     }
-
+    companion object{
+        fun newInstance(buscar: Boolean, fragmentoBack: Inicio_Registro, user: Usuario):
+                FragmentoPerfil = FragmentoPerfil(user, buscar, fragmentoBack)
+    }
 }

@@ -24,4 +24,7 @@ class FragmentoRegistro : Inicio_Registro() {
     ): View? {
         return inflater.inflate(R.layout.fragment_registro, container, false)
     }
+    companion object{
+        fun newInstance(): Inicio_Registro = FragmentoRegistro()
+    }
 }

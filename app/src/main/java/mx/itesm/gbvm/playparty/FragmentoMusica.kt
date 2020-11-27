@@ -10,17 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import kotlin.collections.ArrayList
 
-class FragmentoMusica(idMusica: String = "-MN6tS4qVNtOYELe3nrp") : Fragment() {
+class FragmentoMusica(var idMusica: String = "") : Fragment() {
 
-    var idMusica = idMusica
     private lateinit var rvTarjetas: RecyclerView
     private val database = FirebaseDatabase.getInstance()
     private lateinit var referencia: DatabaseReference
     internal lateinit var callback: OnNewArrayListener
-    lateinit var array: Array<Tarjeta>
-    lateinit var adaptador: Adaptador
-
-    var flagAdaptador = true
+    var array: Array<Tarjeta> = arrayOf(Tarjeta())
+    var adaptador: Adaptador = Adaptador(array, this@FragmentoMusica, idMusica)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,28 +26,30 @@ class FragmentoMusica(idMusica: String = "-MN6tS4qVNtOYELe3nrp") : Fragment() {
     ): View? {
         val vista = inflater.inflate(R.layout.fragment_musica, container, false)
         rvTarjetas = vista.findViewById(R.id.rvTarjetas)
+
+        println(idMusica)
+        crearArrTarjetas()
         configurarRecyclerView()
         return vista
     }
 
     override fun onStart() {
         super.onStart()
+        rvTarjetas.adapter = adaptador
 
-        if(this::adaptador.isInitialized) {
-            rvTarjetas.adapter = adaptador
-        }
     }
 
     private fun configurarRecyclerView() {
         val admLayout = LinearLayoutManager(AppPlayParty.context)
-        crearArrTarjetas()
         rvTarjetas.layoutManager = admLayout
+        rvTarjetas.adapter = adaptador
     }
 
     private fun crearArrTarjetas(){
-
+        println("crearArrTarjetas")
         val miArreglo = ArrayList<Tarjeta>()
         referencia = database.getReference("/Usuarios/$idMusica/Playlist")
+        println(idMusica)
         referencia.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
             }
@@ -63,12 +62,12 @@ class FragmentoMusica(idMusica: String = "-MN6tS4qVNtOYELe3nrp") : Fragment() {
                 }
                 val arreglo1 = Array(miArreglo.size){Tarjeta()}
                 array = miArreglo.toArray(arreglo1)
-                if(flagAdaptador){
-                    adaptador = Adaptador(array, this@FragmentoMusica)
-                    rvTarjetas.adapter = adaptador
-                }else{
-                    callback.onArrayChanged(array)
-                }
+
+                //adaptador = Adaptador(array, this@FragmentoMusica, idMusica)
+                //rvTarjetas.adapter = adaptador
+                println("OnArrayChanged Fragmento Musica")
+                println(snapshot)
+                callback.onArrayChanged(array)
             }
         })
     }

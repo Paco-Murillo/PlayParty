@@ -16,5 +16,7 @@ class Registro_o_InicioDeSesion : Fragment() {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_registro_inicio_sesion, container, false)
     }
-
+    companion object{
+        fun newInstance(): Registro_o_InicioDeSesion = Registro_o_InicioDeSesion()
+    }
 }

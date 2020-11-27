@@ -4,15 +4,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.renglon_musica.view.*
 //import com.squareup.picasso.Picasso
 
 class Adaptador(
-    arrDatos: Array<Tarjeta>,
-    fragmentoMusica: FragmentoMusica
+    var arrDatos: Array<Tarjeta>,
+    fragmentoMusica: FragmentoMusica,
+    var idMusica: String
 ) :
     RecyclerView.Adapter<Adaptador.VistaRenglon>(), FragmentoMusica.OnNewArrayListener {
-    var arrDatos: Array<Tarjeta> = arrDatos
     init {
         fragmentoMusica.setOnNewArrayListener(this)
     }
@@ -28,6 +29,7 @@ class Adaptador(
         holder.vistaRenglon.buttonL.setOnClickListener {
             println("Oprimiste el boton $position")
             arrDatos[position].points++
+            actualizarBD(tarjeta)
             val string = arrDatos[position].points.toString() + " Likes"
             holder.vistaRenglon.Count.text = string
             if(position != 0) {
@@ -41,6 +43,35 @@ class Adaptador(
         }
         holder.set(tarjeta)
     }
+    fun actualizarBD(tarjeta: Tarjeta){
+        var referencia = FirebaseDatabase.getInstance().getReference("/Usuarios/$idMusica/Playlist")
+        referencia.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach { registro ->
+                    val thisTarjeta = registro.getValue(Tarjeta::class.java)!!
+                    if (tarjeta.idSong == thisTarjeta.idSong) {
+                        actualizarBDKey(tarjeta, registro.key!!)
+                    }
+                }
+            }
+        })
+    }
+
+    fun ordenarArray(){
+        arrDatos.sortWith(Tarjeta.Comparator().reversed())
+    }
+
+    fun actualizarBDKey(tarjeta: Tarjeta, string: String){
+        var referencia = FirebaseDatabase.getInstance().getReference("/Usuarios/$idMusica/Playlist/$string/points")
+        referencia.setValue(tarjeta.points) { error: DatabaseError?, _: DatabaseReference ->
+            if (error == null) {
+                println("Points Updated")
+            }
+        }
+    }
 
     override fun getItemCount(): Int {
         return arrDatos.size
@@ -50,7 +81,11 @@ class Adaptador(
     }
 
     override fun onArrayChanged(array: Array<Tarjeta>){
+        for (i in arrDatos.indices){
+            println(arrDatos[i])
+        }
         arrDatos = array
+        ordenarArray()
         notifyDataSetChanged()
     }
 

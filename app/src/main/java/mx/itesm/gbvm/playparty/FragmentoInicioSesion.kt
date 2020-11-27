@@ -57,6 +57,9 @@ class FragmentoInicioSesion : Inicio_Registro() {
         return mView
 
     }
+    companion object{
+        fun newInstance(): Inicio_Registro = FragmentoInicioSesion()
+    }
 /*
     fun fragLoginGoogle() {
         mView.sign_in_button.setOnClickListener {

@@ -11,10 +11,13 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.provider.Settings
+import android.view.LayoutInflater
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -47,6 +50,8 @@ import kotlinx.android.synthetic.main.fragment_registro.etEmail
 import kotlinx.android.synthetic.main.fragment_registro.etPassword
 import kotlinx.android.synthetic.main.fragment_registro_inicio_sesion.*
 import kotlinx.android.synthetic.main.qr_inicio.*
+import java.lang.reflect.Array.newInstance
+import javax.xml.datatype.DatatypeFactory.newInstance
 
 
 class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListener, FragmentoQR.OnHeadlineSelectedListener, FragmentoPerfil.OnNewArrayListener {
@@ -55,7 +60,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private var posicion: Location? = null
 
     // Validacion ID
-    var idMusica:String = ""
+    var idMusica:String = "------------------------------ h -------------------------------"
     var BotonValido: Boolean = false
     private  val database = FirebaseDatabase.getInstance()
     private lateinit var referencia: DatabaseReference
@@ -81,17 +86,12 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     //Agregue funcionalidad al btnInicioSesión
 
     // Fragments
-
-    var musicaFragment = FragmentoMusica(idMusica)
-    val mapaFragment = FragmentoMapa()
-    val registroOIniciodesesion = Registro_o_InicioDeSesion()
-    val QRFragment = FragmentoQR(this)
-    val fragInicio = FragmentoInicioSesion()
-    val fragRegistro = FragmentoRegistro()
+    var fragInicio = FragmentoInicioSesion.newInstance()
+    var fragRegistro = FragmentoRegistro.newInstance()
     //Aquí aun no hay usuario definido
     var buscar = false
     var encontrado = false
-    var fragPerfil = FragmentoPerfil(usuarioActual, buscar, fragRegistro)
+    var fragPerfil = FragmentoPerfil.newInstance(buscar,fragRegistro,usuarioActual)
     init {
         fragPerfil.setOnFragmentPerfilStoppedListener(this)
     }
@@ -132,7 +132,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
         updateUIGoogle(account)
 
 
-
+        var QRFragment = FragmentoQR(this)
 
         //QR
         QRFragment.setOnHeadlineSelectedListener(this)
@@ -150,27 +150,23 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                     } else if (Pablo == "Perfil") {
                         makeCurrentFragment(fragPerfil)
                     } else {
-                        makeCurrentFragment(registroOIniciodesesion)
+                        makeCurrentFragment(Registro_o_InicioDeSesion())
                     }
                 R.id.nav_Musica ->
                     if (BotonValido) {
-                        makeCurrentFragment(musicaFragment)
+                        makeCurrentFragment(FragmentoMusica(idMusica))
 
                     } else {
                         makeCurrentFragment(QRFragment)
                     }
-                R.id.nav_Mapa -> makeCurrentFragment(mapaFragment)
+                R.id.nav_Mapa -> makeCurrentFragment(FragmentoMapa())
             }
             true
         }
     }
 
-    fun instanciarLista(v: View){
-        var track = "spotify:playlist:3KRKPBZ2P2YT90R1CTBEiL"
-        mSpotifyAppRemote?.getPlayerApi()?.play(track)
-    }
-
     fun valid(idMusica: String){
+        this.idMusica = idMusica
         referencia = database.getReference("/Usuarios")
         referencia.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -182,7 +178,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                     if (establecimiento != null) {
                         val id = establecimiento.userID
                         if (id == idMusica) {
-                            makeCurrentFragment(musicaFragment)
+                            makeCurrentFragment(FragmentoMusica(this@QRInicio.idMusica))
                             BotonValido = true
                         }
 
@@ -247,7 +243,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
 
     fun btnQR(v: View){
         BotonValido = false
-        makeCurrentFragment(QRFragment)
+        makeCurrentFragment(FragmentoQR(this))
     }
 
     fun btnFragInicioSesion(v: View){
@@ -401,8 +397,8 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     @SuppressLint("RestrictedApi")
     fun crearUsuarioBD(){
         //Leer la información que ingresa el usuario
-        val email = etEmail.text.toString()
-        val password = etPassword.text.toString()
+        email = etEmail.text.toString()
+        password = etPassword.text.toString()
         val nombreU = etNombreU.text.toString()
         val fechaN = etFecha.text.toString()
         //Obtenemos la llave del usuario con la referencia del database
@@ -431,7 +427,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                     crearUsuarioBD()
                     updateUI(user)
                     Pablo = "Perfil"
-                    fragPerfil = FragmentoPerfil(usuarioActual,buscar, fragRegistro)
+                    fragPerfil = FragmentoPerfil.newInstance(buscar,fragRegistro,usuarioActual)
                     fragPerfil.setOnFragmentPerfilStoppedListener(this)
                     makeCurrentFragment(fragPerfil)
                 } else {
@@ -483,7 +479,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
                     updateUI(user)
                     Pablo = "Perfil"
                     usuarioActual = Usuario(user.toString(), email, password, "", "")
-                    fragPerfil = FragmentoPerfil(usuarioActual, !encontrado, fragInicio)
+                    fragPerfil = FragmentoPerfil.newInstance(!encontrado,fragInicio,usuarioActual)
                     fragPerfil.setOnFragmentPerfilStoppedListener(this)
                     makeCurrentFragment(fragPerfil)
                 } else {
@@ -502,6 +498,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     fun btnCerrarSesion(v: View){
         //var textViewErase = findViewById<TextView>(R.id.etIniEmail)
         //textViewErase.text = SpannableStringBuilder("")
+        encontrado = false
 
 
 
@@ -579,10 +576,7 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     private var mSpotifyAppRemote: SpotifyAppRemote? = null
     //Hola
 
-    private fun play(cancion: String){
-        var track = "spotify:track:"+ cancion
-        mSpotifyAppRemote?.getPlayerApi()?.play(track)
-    }
+
 
     private fun connected() {
         val mySnackbar = Snackbar.make(findViewById(R.id.fragment_container), "Conectado!", Snackbar.LENGTH_SHORT)
@@ -605,5 +599,28 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     override fun onArticleSelected(string: String) {
         println(string)
         valid(string)
+    }
+    fun contador(tiempo:Int){
+        val timer = object: CountDownTimer(tiempo.toLong() * 1000,1000){
+            override fun onTick(millisSec: Long) {
+                println(millisSec)
+            }
+
+            override fun onFinish() {
+                play("0ct6r3EGTcMLPtrXHDvVjc")
+                contador(185)
+            }
+
+        }
+        timer.start()
+    }
+    fun instanciarLista(v: View){
+        play("040SAk4tIYfcqHXWF6yfpG")
+        contador(185)
+    }
+
+    private fun play(cancion: String){
+        var track = "spotify:track:"+ cancion
+        mSpotifyAppRemote?.getPlayerApi()?.play(track)
     }
 }
