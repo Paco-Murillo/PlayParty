@@ -8,13 +8,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.ListFragment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import kotlinx.android.synthetic.main.fragment_perfil.*
-import okhttp3.internal.cache.DiskLruCache
 
 class FragmentoPerfil(user: Usuario, buscar:Boolean, fragmentoBack:Inicio_Registro) : Fragment() {
     var fragmentoBack = fragmentoBack

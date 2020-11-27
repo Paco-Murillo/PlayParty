@@ -8,7 +8,6 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.renglon_musica.view.*
-//import com.squareup.picasso.Picasso
 
 class Adaptador(
     var arrDatos: Array<Tarjeta>,
@@ -29,7 +28,6 @@ class Adaptador(
     override fun onBindViewHolder(holder: VistaRenglon, position: Int) {
         val tarjeta = arrDatos[position]
         holder.vistaRenglon.buttonL.setOnClickListener {
-            println("Oprimiste el boton $position")
             arrDatos[position].points++
             actualizarBD(tarjeta)
             val string = arrDatos[position].points.toString() + " Likes"
@@ -71,9 +69,6 @@ class Adaptador(
     override fun getItemCount(): Int {
         return arrDatos.size
     }
-    fun actualizarPuntos(){
-
-    }
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onArrayChanged(array: Array<Tarjeta>){
@@ -91,8 +86,6 @@ class Adaptador(
             vistaRenglon.Artista.text = tarjeta.artista
             val string = tarjeta.points.toString() + " Likes"
             vistaRenglon.Count.text = string
-            vistaRenglon.buttonL.text = "Like"
-            //Picasso.with(AppPlayParty.context).load(tarjeta.idImagen).into(vistaRenglon.imageAlbum)
 
         }
     }

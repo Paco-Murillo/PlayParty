@@ -26,8 +26,6 @@ class FragmentoMusica(var idMusica: String = "") : Fragment() {
     ): View? {
         val vista = inflater.inflate(R.layout.fragment_musica, container, false)
         rvTarjetas = vista.findViewById(R.id.rvTarjetas)
-
-        println(idMusica)
         crearArrTarjetas()
         configurarRecyclerView()
         return vista
@@ -46,10 +44,8 @@ class FragmentoMusica(var idMusica: String = "") : Fragment() {
     }
 
     private fun crearArrTarjetas(){
-        println("crearArrTarjetas")
         val miArreglo = ArrayList<Tarjeta>()
         referencia = database.getReference("/Usuarios/$idMusica/Playlist")
-        println(idMusica)
         referencia.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
             }
@@ -57,14 +53,10 @@ class FragmentoMusica(var idMusica: String = "") : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach { registro ->
                     val tarjeta = registro.getValue(Tarjeta::class.java)!!
-                    println(tarjeta)
                     miArreglo.add(tarjeta)
                 }
                 val arreglo1 = Array(miArreglo.size){Tarjeta()}
                 array = miArreglo.toArray(arreglo1)
-
-                println("OnArrayChanged Fragmento Musica")
-                println(snapshot)
                 callback.onArrayChanged(array)
             }
         })

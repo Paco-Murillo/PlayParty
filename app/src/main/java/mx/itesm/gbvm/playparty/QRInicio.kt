@@ -1,6 +1,5 @@
 package mx.itesm.gbvm.playparty
 
-//Spoty
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -20,12 +19,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -69,12 +62,12 @@ class   QRInicio : AppCompatActivity(), GPSListener, Connector.ConnectionListene
     var password = ""
 
     //qr
-    private val RC_BARCODE_CAPTURE = 6669
     val SCAN_QR = 6670
 
     // Fragments
     var fragInicio = FragmentoInicioSesion.newInstance()
     var fragRegistro = FragmentoRegistro.newInstance()
+
     //Aquí aun no hay usuario definido
     var buscar = false
     var encontrado = false

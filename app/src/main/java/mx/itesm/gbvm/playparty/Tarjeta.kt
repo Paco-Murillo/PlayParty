@@ -1,8 +1,5 @@
 package mx.itesm.gbvm.playparty
 
-import java.net.IDN
-import java.util.Comparator
-
 data class Tarjeta(var points: Int = 0, var cancion: String = "", var artista: String = "", var idImagen: String = "", var tiempo: Int = 0, var idSong: String = "")
 {
     class Comparator: kotlin.Comparator<Tarjeta>{
