@@ -2,6 +2,7 @@ package mx.itesm.gbvm.playparty
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.nfc.tech.Ndef.get
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import kotlinx.android.synthetic.main.renglon_musica.view.*
 import java.net.HttpURLConnection
 import java.net.URL
 import android.widget.Toast
+import com.squareup.picasso.Picasso
 import java.io.IOException
 
 class Adaptador(private val arrDatos: Array<Tarjeta>) :
@@ -47,12 +49,11 @@ class Adaptador(private val arrDatos: Array<Tarjeta>) :
     }
 
     class VistaRenglon(val vistaRenglon: View) : RecyclerView.ViewHolder(vistaRenglon) {
-        private var loadedImage: Bitmap? = null
         fun set(tarjeta: Tarjeta) {
             vistaRenglon.Cancion.text = tarjeta.cancion
             vistaRenglon.Artista.text = tarjeta.artista
             vistaRenglon.Count.text = tarjeta.points.toString() + " Likes"
-            vistaRenglon.imageAlbum.setImageResource(tarjeta.idImagen)
+            Picasso.with(AppPlayParty.context).load(tarjeta.idImagen).into(vistaRenglon.imageAlbum)
 
         }
     }

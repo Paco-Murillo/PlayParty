@@ -37,9 +37,9 @@ class FragmentoMusica : Fragment() {
 
     private fun crearArrTarjetas(): Array<Tarjeta> {
         var arreglo = arrayOf(
-            Tarjeta(4, "No Money", "Galantis", R.drawable.bts, 189126),
-            Tarjeta(3, "DJ Snake", "Middle", R.drawable.nm, 220573),
-            Tarjeta(0, "Cheap Thrills", "Sia", R.drawable.ct, 211666)
+            Tarjeta(4, "No Money", "Galantis", "https://i.scdn.co/image/ab67616d0000b273119cb56f073efd326643dcfe", 189126, "540vIaP2JwjQb9dm3aArA4"),
+            Tarjeta(4, "DJ Snake", "Middle", "https://i.scdn.co/image/ab67616d0000b273212d776c31027c511f0ee3bc", 220573,"0gb1J5UrTpzaU1s3nupgCd"),
+            Tarjeta(0, "Cheap Thrills", "Sia", "https://i.scdn.co/image/ab67616d0000b27349e0134c686547c28b7c999f", 211666, "27SdWb2rFzO6GWiYDBTD9j")
         )
 
         val miArreglo = ArrayList<Tarjeta>()
