@@ -40,9 +40,10 @@
         <ImageView
             android:id="@+id/imageView5"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/ic_launcher_foreground" />
+            android:layout_height="200dp"
+            android:layout_weight="6"
+            android:src="@drawable/ic_launcher_foreground"
+            app:srcCompat="@drawable/applogo" />
 
         <TextView
             android:id="@+id/textView4"

@@ -16,10 +16,7 @@ import androidx.core.text.set
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PlayGamesAuthCredential
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
@@ -28,13 +25,16 @@ import com.spotify.protocol.types.Track
 import kotlinx.android.synthetic.main.fragment_fragmento_musica2.*
 import kotlinx.android.synthetic.main.fragment_fragmento_perfil2.*
 import kotlinx.android.synthetic.main.fragment_fragmento_perfil2.tfNombreU
+import net.glxn.qrgen.android.QRCode
 
 
 class FragmentoPerfil2 : Fragment() {
     lateinit var mAuth: FirebaseAuth
     lateinit var usuario: Usuario
     lateinit var QRInicio: QRInicio
-
+    lateinit var referencia: DatabaseReference
+    lateinit var miArreglo: ArrayList<Tarjeta>
+    lateinit var baseDatos: FirebaseDatabase
 
     lateinit var array: Array<Tarjeta>
 
@@ -56,6 +56,9 @@ class FragmentoPerfil2 : Fragment() {
         tfNombreU.text = usuario.nombreU
         tfemail.text = usuario.email
         tfID.text = usuario.playlist
+        miArreglo = ArrayList<Tarjeta>()
+        baseDatos = FirebaseDatabase.getInstance()
+        referencia = baseDatos.getReference("/Usuarios/${usuario.userID}/Playlist")
         btnCerrar.setOnClickListener {
             mAuth.signOut()
             QRInicio.cambiarPerfil(FragmentoInicioSesion2.newInstance(QRInicio))
@@ -113,13 +116,9 @@ class FragmentoPerfil2 : Fragment() {
     fun contador(tiempo:Int){
         val timer = object: CountDownTimer(tiempo.toLong() * 1000,1000){
             override fun onTick(millisSec: Long) {
-                println(millisSec)
             }
 
             override fun onFinish() {
-                val miArreglo = ArrayList<Tarjeta>()
-                val baseDatos = FirebaseDatabase.getInstance()
-                val referencia = baseDatos.getReference("/Usuarios/${usuario.userID}/Playlist")
                 referencia.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onCancelled(error: DatabaseError) {
                     }
@@ -141,17 +140,11 @@ class FragmentoPerfil2 : Fragment() {
                 })
             }
         }
+
         timer.start()
     }
-    /*
-    fun mostrarQR(){
-        try {
 
-            var bm = encodeAsBitMap(usuario.userID, BarcodeFormat.QR_CODE,150,150)
-        }
-    }
 
-     */
     private fun play(cancion: String){
         var track = "spotify:track:"+ cancion
         mSpotifyAppRemote?.getPlayerApi()?.play(track)

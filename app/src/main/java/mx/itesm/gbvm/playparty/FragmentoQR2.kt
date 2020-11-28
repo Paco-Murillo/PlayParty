@@ -44,13 +44,12 @@ class FragmentoQR2 : Fragment() {
             startActivityForResult(scanQrIntent, 6670)
         }
         btnBuscar.setOnClickListener {
-            idMusica = etBuscarId.toString()
+            idMusica = etBuscarId.text.toString()
             valid(idMusica)
         }
     }
     fun valid(idMusica: String){
         this.idMusica = idMusica
-        var boolean = false
         val baseDatos = FirebaseDatabase.getInstance()
         val referencia = baseDatos.getReference("/Usuarios")
         referencia.addValueEventListener(object : ValueEventListener {
@@ -63,17 +62,15 @@ class FragmentoQR2 : Fragment() {
                     if (usuario != null) {
                         val id = usuario.userID
                         if (id == idMusica) {
-                            QRInicio.cambiarMusica(FragmentoMusica2.newInstance(QRInicio,idMusica))
-                            boolean = true
+                            println("unciona-------------")
+                            QRInicio.cambiarMusica(FragmentoMusica2.newInstance(QRInicio,id))
                         }
-
+                    }else{
+                        Toast.makeText(
+                            QRInicio, "ID Invalido!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                }
-                if(!boolean){
-                    Toast.makeText(
-                        QRInicio, "ID Invalido!",
-                        Toast.LENGTH_SHORT
-                    ).show()
                 }
             }
         })

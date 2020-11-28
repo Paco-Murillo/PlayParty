@@ -27,10 +27,10 @@
         <ImageView
             android:id="@+id/imageView6"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_weight="4"
             android:src="@drawable/common_google_signin_btn_icon_dark"
-            app:srcCompat="@drawable/ic_launcher_foreground" />
+            app:srcCompat="@drawable/applogo" />
 
         <TextView
             android:layout_width="match_parent"

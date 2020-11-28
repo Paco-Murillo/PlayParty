@@ -17,9 +17,10 @@
         <ImageView
             android:id="@+id/imageView14"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_launcher_foreground" />
+            android:src="@drawable/ic_launcher_foreground"
+            app:srcCompat="@drawable/applogo" />
 
         <Button
             android:id="@+id/btnQR"

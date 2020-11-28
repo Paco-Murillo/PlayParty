@@ -45,7 +45,7 @@ class FragmentoMusica2 : Fragment() {
         }
         rvTarjeta = rvTarjetas
         val admLayout = LinearLayoutManager(QRInicio)
-        rvTarjetas.layoutManager = admLayout
+        rvTarjeta.layoutManager = admLayout
         crearArrTarjetas()
     }
 
@@ -65,7 +65,7 @@ class FragmentoMusica2 : Fragment() {
                 val arreglo1 = Array(miArreglo.size){Tarjeta()}
                 array = miArreglo.toArray(arreglo1)
                 array.sortWith(Tarjeta.Comparator().reversed())
-                rvTarjetas.adapter = Adaptador(array, idMusica)
+                rvTarjeta.adapter = Adaptador(array, idMusica)
             }
         })
     }
